@@ -25,7 +25,11 @@ function Stat({ label, value }: { label: string; value: number }) {
 
 export default function DashboardPage() {
   const { data: restaurant } = useSWR<RestaurantDTO | null>("/api/restaurants");
-  const { data: stats } = useSWR<DashboardStats | null>(
+  const {
+    data: stats,
+    error: statsError,
+    mutate: reloadStats,
+  } = useSWR<DashboardStats | null>(
     restaurant ? `/api/dashboard?restaurantId=${restaurant.id}` : null
   );
 
@@ -39,7 +43,18 @@ export default function DashboardPage() {
         {restaurant ? restaurant.name : "Cargando..."} · comportamiento de tus clientes
       </p>
 
-      {!stats ? (
+      {statsError ? (
+        <div className="mt-10 rounded-2xl border border-red-200 bg-red-50 p-6">
+          <p className="font-semibold text-red-900">No se pudieron cargar las estadísticas.</p>
+          <p className="mt-2 text-sm text-red-700">{statsError.message}</p>
+          <button
+            onClick={() => reloadStats()}
+            className="mt-4 rounded-xl bg-red-900 px-4 py-2 text-sm font-semibold text-white"
+          >
+            Reintentar
+          </button>
+        </div>
+      ) : !stats ? (
         <p className="mt-10 text-neutral-500">Cargando estadísticas...</p>
       ) : (
         <div className="mt-8 space-y-8">

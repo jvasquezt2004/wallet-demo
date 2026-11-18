@@ -34,9 +34,11 @@ const inputClass =
 const labelClass = "block text-xs font-semibold uppercase tracking-wide text-neutral-500";
 
 export default function AdminPage() {
-  const { data: restaurant, mutate: mutateRestaurant } = useSWR<RestaurantDTO | null>(
-    "/api/restaurants"
-  );
+  const {
+    data: restaurant,
+    error: loadError,
+    mutate: mutateRestaurant,
+  } = useSWR<RestaurantDTO | null>("/api/restaurants");
 
   const [form, setForm] = useState<FormState>(DEFAULT_FORM);
   const [restaurantId, setRestaurantId] = useState<string | null>(null);
@@ -151,7 +153,22 @@ export default function AdminPage() {
         Personaliza la tarjeta, define las recompensas y publícala para compartir el QR.
       </p>
 
-      {restaurant === undefined ? (
+      {loadError ? (
+        <div className="mt-10 rounded-2xl border border-red-200 bg-red-50 p-6">
+          <h2 className="font-semibold text-red-900">No se pudo cargar el restaurante</h2>
+          <p className="mt-2 text-sm text-red-800">{loadError.message}</p>
+          <p className="mt-2 text-sm text-red-700">
+            Revisa que <code>DATABASE_URL</code> esté configurada en Vercel y que las tablas
+            existan (<code>pnpm db:push</code>).
+          </p>
+          <button
+            onClick={() => mutateRestaurant()}
+            className="mt-4 rounded-xl bg-red-900 px-4 py-2 text-sm font-semibold text-white"
+          >
+            Reintentar
+          </button>
+        </div>
+      ) : restaurant === undefined ? (
         <p className="mt-10 text-neutral-500">Cargando...</p>
       ) : (
         <div className="mt-8 grid gap-8 lg:grid-cols-[1fr_360px]">
