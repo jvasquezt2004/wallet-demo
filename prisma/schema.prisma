@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Restaurant {
+  id               String   @id @default(cuid())
+  name             String
+  slug             String   @unique
+  template         String   @default("classico")
+  logoUrl          String   @default("")
+  bgColor          String   @default("#1e293b")
+  primaryColor     String   @default("#facc15")
+  textColor        String   @default("#ffffff")
+  description      String?
+  stampsRequired   Int      @default(5)
+  rewardText       String   @default("Recompensa")
+  rewards          Json     @default("[]")
+  allowedIncentives Json    @default("[]")
+  published        Boolean  @default(false)
+  createdAt        DateTime @default(now())
+
+  customers Customer[]
+  scans     Scan[]
+}
+
+model Customer {
+  id                 String    @id @default(cuid())
+  restaurantId       String
+  name               String
+  email              String
+  currentStamps      Int       @default(0)
+  totalVisits        Int       @default(0)
+  lastVisitAt        DateTime  @default(now())
+  unlockedRewardIds  Json      @default("[]")
+  passCode           String    @unique
+  googleWalletObjectId String?
+  applePushToken     String?
+  createdAt          DateTime  @default(now())
+
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  scans      Scan[]
+
+  @@unique([email, restaurantId])
+  @@index([restaurantId])
+  @@index([passCode])
+}
+
+model Scan {
+  id           String   @id @default(cuid())
+  customerId   String
+  restaurantId String
+  scannedAt    DateTime @default(now())
+
+  customer   Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  restaurant Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([restaurantId])
+}

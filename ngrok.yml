@@ -1,0 +1,11 @@
+version: "3"
+tunnels:
+  web:
+    proto: http
+    addr: 3000
+  convex:
+    proto: http
+    addr: 3210
+  convex-site:
+    proto: http
+    addr: 3211

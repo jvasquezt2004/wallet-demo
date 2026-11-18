@@ -1,36 +1,66 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sello Club
 
-## Getting Started
+Programa de lealtad de **sellos** para restaurantes. El cliente se registra con nombre y correo desde un QR/enlace, obtiene una tarjeta digital y la guarda en Google Wallet. El personal escanea el QR (o teclea el código de 8 caracteres) para sumar sellos. Incluye dashboard de visitas, clientes nuevos, frecuencia e inactivos.
 
-First, run the development server:
+Stack: **Next.js 16** (App Router, Cache Components), **Prisma + Postgres** (Neon/Supabase), **SWR**, Tailwind v4 y Google Wallet API. Todo el backend son route handlers de Next; no hay Convex ni servicios externos de datos.
+
+## Puesta en marcha
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+# 1. Copia .env.local y pon tu DATABASE_URL real (Neon/Supabase)
+pnpm db:push      # crea las tablas desde prisma/schema.prisma
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `/` — menú
+- `/admin` — configurar el restaurante, publicar y obtener el QR
+- `/c/<slug>` — enlace público del cliente (registro + tarjeta)
+- `/scan` — escáner del personal (cámara, QR o código manual de 8 caracteres)
+- `/scan/<código>` — confirmación al abrir el código de barras de Wallet
+- `/dashboard` — métricas
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+El demo trabaja con **un solo restaurante**; `/admin` crea el primero si no existe.
 
-## Learn More
+## Variables de entorno
 
-To learn more about Next.js, take a look at the following resources:
+```dotenv
+DATABASE_URL=postgresql://...              # requerida
+NEXT_PUBLIC_APP_URL=http://localhost:3000  # fallback; se detecta desde la petición
+GOOGLE_ISSUER_ID=...
+GOOGLE_SERVICE_EMAIL=...
+GOOGLE_PRIVATE_KEY=...                     # con \n o con saltos de línea reales
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+La URL pública se detecta **automáticamente** de cada petición (`host` / `x-forwarded-*`), así que funciona igual en localhost, ngrok o Vercel sin cambiar variables. Los QR de la app usan `window.location.origin`; el JWT de Wallet usa la URL detectada. `NEXT_PUBLIC_APP_URL` solo es un fallback si no hay cabeceras de host (caso muy raro). En Vercel, de todos modos conviene ponerlo al dominio real HTTPS como red de seguridad.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Google Wallet
 
-## Deploy on Vercel
+Sin credenciales la app funciona igual: la tarjeta in-app con su QR sigue siendo válida y el botón de Wallet muestra un error claro. Para pases reales:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. Invita al service account (`GOOGLE_SERVICE_EMAIL`) como **Developer** en Google Pay & Wallet Console → *Users*.
+2. Invita también como Developer (o test account) cada cuenta de Google con la que vayas a probar en el móvil.
+3. Los issuers nuevos están en **modo demo** y los pases llevan `[TEST ONLY]`. Para clientes reales hay que completar el *Business Profile* y pedir **Request publishing access**. Google retira el sello al aprobar; no hace falta cambiar código.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+El JWT incluye los campos obligatorios `iat` y `programLogo` (se genera una imagen pública con los colores de la marca si no hay logo). No se usa `heroImage`: un túnel ngrok sirve su página de aviso en vez de la imagen y Google rechazaría el pase.
+
+## Android
+
+`/scan` usa `BarcodeDetector` (Chrome Android) con `getUserMedia`. La cámara exige HTTPS: `localhost` funciona, `http://192.168.x.x:3000` no. Para probar en un teléfono usa ngrok sobre el puerto 3000 (solo hace falta un túnel, porque ya no hay backend separado):
+
+```bash
+ngrok http 3000
+```
+
+No hace falta cambiar ninguna variable: la URL se detecta sola. `next.config.ts` ya permite `*.ngrok-free.app`, `*.ngrok-free.dev`, `*.ngrok.app` e `*.ngrok.io`.
+
+## Desplegar en Vercel
+
+1. Crea una base Postgres (Neon/Supabase) y pega `DATABASE_URL` en las variables de Vercel.
+2. Añade `GOOGLE_ISSUER_ID`, `GOOGLE_SERVICE_EMAIL` y `GOOGLE_PRIVATE_KEY`. Opcionalmente `NEXT_PUBLIC_APP_URL` con tu dominio HTTPS como fallback.
+3. Deploy. `postinstall` ejecuta `prisma generate` automáticamente.
+4. Ejecuta `pnpm db:push` una vez contra la base de producción (o usa `prisma migrate`).
+
+No hay nada más que configurar: el feed de datos se lee con SWR desde los route handlers.
