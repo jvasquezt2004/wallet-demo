@@ -1,25 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { AlertIcon, CheckIcon, CloseIcon, ExternalIcon, InfoIcon, QrIcon, WalletIcon } from "./icons";
 import { QrCode } from "./qr-code";
-
-type Restaurant = {
-  name: string;
-  slug: string;
-  logoUrl: string;
-  bgColor: string;
-  primaryColor: string;
-  textColor: string;
-  description?: string | null;
-  stampsRequired: number;
-  rewardText: string;
-  rewards?: {
-    id: string;
-    label: string;
-    stampsRequired: number;
-    promoText: string;
-  }[];
-};
+import { Steps } from "./steps";
+import { StampCard, type CardRestaurant } from "./stamp-card";
+import { btnCanary, btnInk, btnOutlineLight } from "@/lib/ui";
 
 type Props = {
   customerId: string;
@@ -27,13 +13,28 @@ type Props = {
   currentStamps: number;
   totalVisits: number;
   unlockedRewardIds?: string[];
-  restaurant: Restaurant;
+  passCode?: string;
+  restaurant: CardRestaurant;
   recovered?: boolean;
   walletUrl?: string | null;
   walletLoading?: boolean;
   walletError?: string | null;
+  walletSaved?: boolean;
   onAddWallet?: () => void;
 };
+
+type StampEvent = { from: number; to: number };
+
+function readSeen(customerId: string): number | null {
+  try {
+    const raw = window.localStorage.getItem(`loyalty-seen:${customerId}`);
+    if (raw === null) return null;
+    const value = Number(raw);
+    return Number.isFinite(value) ? value : null;
+  } catch {
+    return null;
+  }
+}
 
 export function LoyaltyCard({
   customerId,
@@ -41,186 +42,208 @@ export function LoyaltyCard({
   currentStamps,
   totalVisits,
   unlockedRewardIds = [],
+  passCode,
   restaurant,
   recovered,
   walletUrl,
   walletLoading,
   walletError,
+  walletSaved,
   onAddWallet,
 }: Props) {
   const [scanUrl] = useState(() =>
     typeof window === "undefined" ? "" : `${window.location.origin}/scan/${customerId}`
   );
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
-  const maxStamps = Math.max(
-    restaurant.stampsRequired,
-    ...(restaurant.rewards ?? []).map((reward) => reward.stampsRequired)
+  // Momento del sello: si desde la última vez que se abrió la tarjeta hay sellos
+  // nuevos (los puso el personal), caen con la animación y se anuncian.
+  const [prevStamps, setPrevStamps] = useState<number>(() => {
+    const seen = readSeen(customerId);
+    return seen !== null && seen <= currentStamps ? seen : currentStamps;
+  });
+  const [event, setEvent] = useState<StampEvent | null>(() =>
+    prevStamps < currentStamps ? { from: prevStamps, to: currentStamps } : null
   );
-  const stamps = Math.max(0, Math.min(maxStamps, currentStamps));
+  if (currentStamps !== prevStamps) {
+    setPrevStamps(currentStamps);
+    setEvent(currentStamps > prevStamps ? { from: prevStamps, to: currentStamps } : null);
+  }
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(`loyalty-seen:${customerId}`, String(currentStamps));
+    } catch {
+      // Sin almacenamiento la tarjeta funciona igual; solo no recuerda lo visto.
+    }
+  }, [customerId, currentStamps]);
+
+  useEffect(() => {
+    if (!event) return;
+    const timer = window.setTimeout(() => setEvent(null), 9000);
+    return () => window.clearTimeout(timer);
+  }, [event]);
+
+  const rewards = restaurant.rewards ?? [];
+  const newlyUnlocked = event
+    ? rewards.filter((r) => r.stampsRequired > event.from && r.stampsRequired <= event.to)
+    : [];
+
+  const max = Math.max(
+    1,
+    restaurant.stampsRequired ?? 0,
+    ...rewards.map((reward) => reward.stampsRequired)
+  );
+  const stamps = Math.max(0, Math.min(max, currentStamps));
+  const code = passCode ? `${passCode.slice(0, 4)} ${passCode.slice(4)}`.trim() : "";
+
+  const openQr = () => dialogRef.current?.showModal();
+  const closeQr = () => dialogRef.current?.close();
 
   return (
-    <div className="space-y-6">
-      <div
-        className="relative overflow-hidden rounded-3xl p-6 shadow-lg sm:p-8"
-        style={{ backgroundColor: restaurant.bgColor, color: restaurant.textColor }}
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-xs font-medium uppercase tracking-widest opacity-70">
-              Tarjeta de sellos
-            </p>
-            <h2 className="mt-1 text-2xl font-bold">{restaurant.name}</h2>
-          </div>
-          {restaurant.logoUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={restaurant.logoUrl}
-              alt=""
-              className="h-14 w-14 rounded-2xl bg-white/90 object-contain p-1"
-            />
-          ) : (
-            <div
-              className="flex h-14 w-14 items-center justify-center rounded-2xl text-2xl font-bold"
-              style={{ backgroundColor: restaurant.primaryColor, color: restaurant.bgColor }}
-            >
-              {restaurant.name.charAt(0).toUpperCase()}
+    <div className="flex min-h-[100dvh] flex-col">
+      <div className="space-y-5 px-5 pb-6 pt-6">
+        <Steps
+          steps={["Tus datos", "Tu tarjeta", "Wallet"]}
+          current={walletSaved ? 3 : 2}
+        />
+
+        <div aria-live="polite" className="space-y-3 empty:hidden">
+          {event && (
+            <div className="rise flex items-start gap-3 rounded-lg bg-canario p-3.5 text-tinta">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-tinta text-canario">
+                <CheckIcon size={14} strokeWidth={3} />
+              </span>
+              <p className="text-[0.95rem] font-semibold leading-snug">
+                {newlyUnlocked.length > 0
+                  ? `¡Premio desbloqueado: ${newlyUnlocked.map((r) => r.label).join(", ")}! Muestra esta pantalla en caja.`
+                  : `¡Nuevo sello! Llevas ${stamps} de ${max}.`}
+              </p>
+            </div>
+          )}
+          {recovered && !event && (
+            <div className="flex items-start gap-3 rounded-lg bg-hoja-soft p-3.5 text-tinta">
+              <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-hoja text-white">
+                <CheckIcon size={14} strokeWidth={3} />
+              </span>
+              <p className="text-[0.95rem] font-semibold leading-snug">
+                Recuperamos tu tarjeta con tus sellos intactos.
+              </p>
             </div>
           )}
         </div>
 
-        <p className="mt-6 text-sm opacity-80">Hola, {customerName} 👋</p>
-
-        <div className="mt-4 flex flex-wrap gap-x-3 gap-y-2">
-          {Array.from({ length: maxStamps }).map((_, i) => {
-            const stamp = i + 1;
-            const rewardsAtStamp = (restaurant.rewards ?? []).filter(
-              (reward) => reward.stampsRequired === stamp
-            );
-            const isThreshold = rewardsAtStamp.length > 0;
-            return (
-              <div key={i} className="flex flex-col items-center">
-                <div
-                  className="relative flex h-11 w-11 items-center justify-center rounded-full border-2 text-sm font-bold transition-all"
-                  style={{
-                    borderColor: restaurant.primaryColor,
-                    backgroundColor: i < stamps ? restaurant.primaryColor : "transparent",
-                    color: i < stamps ? restaurant.bgColor : restaurant.primaryColor,
-                  }}
-                >
-                  {i < stamps ? "★" : stamp}
-                  {isThreshold && (
-                    <span
-                      className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2"
-                      style={{
-                        backgroundColor: restaurant.primaryColor,
-                        borderColor: restaurant.bgColor,
-                      }}
-                    />
-                  )}
-                </div>
-                {isThreshold && (
-                  <span
-                    className="mt-1 text-[9px] font-bold uppercase tracking-wide"
-                    style={{ color: restaurant.primaryColor }}
-                  >
-                    Premio
-                  </span>
-                )}
-              </div>
-            );
-          })}
+        <div className="rise">
+          <StampCard
+            restaurant={restaurant}
+            stamps={stamps}
+            customerName={customerName}
+            totalVisits={totalVisits}
+            unlockedRewardIds={unlockedRewardIds}
+            landingFrom={event?.from}
+          />
         </div>
 
-        {restaurant.rewards && restaurant.rewards.length > 0 && (
-          <div className="mt-5 rounded-xl bg-white/10 p-3">
-            <p className="text-xs font-semibold uppercase tracking-widest opacity-70">Recompensas</p>
-            <ul className="mt-2 space-y-1.5">
-              {restaurant.rewards.map((reward) => {
-                const unlocked =
-                  unlockedRewardIds.includes(reward.id) || stamps >= reward.stampsRequired;
-                return (
-                  <li key={reward.id} className="flex items-center justify-between gap-2 text-sm">
-                    <span className="min-w-0">
-                      {reward.label}
-                      <span className="block text-xs opacity-70">
-                        {unlocked
-                          ? "¡Desbloqueada! Reclámala en caja"
-                          : reward.promoText ||
-                            `Te faltan ${Math.max(0, reward.stampsRequired - stamps)} sellos`}
-                      </span>
-                    </span>
-                    <span
-                      className="shrink-0 rounded-full px-2 py-0.5 text-xs font-semibold"
-                      style={{
-                        backgroundColor: unlocked ? restaurant.primaryColor : "transparent",
-                        color: unlocked ? restaurant.bgColor : restaurant.textColor,
-                      }}
-                    >
-                      {unlocked ? "✓" : reward.stampsRequired} {unlocked ? "" : "sellos"}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-          </div>
-        )}
-
-        <div className="mt-6 flex items-end justify-between gap-4 border-t border-white/15 pt-4">
-          <div>
-            <p className="text-3xl font-bold">
-              {stamps}
-              <span className="text-lg font-medium opacity-70">/{maxStamps}</span>
-            </p>
-            <p className="text-xs opacity-70">sellos acumulados</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm font-semibold" style={{ color: restaurant.primaryColor }}>
-              {restaurant.rewardText}
-            </p>
-            <p className="mt-1 text-xs opacity-70">{totalVisits} visitas</p>
-          </div>
-        </div>
+        <details className="group text-white/90">
+          <summary className="flex min-h-11 cursor-pointer list-none items-center gap-2 text-[0.95rem] font-semibold marker:hidden [&::-webkit-details-marker]:hidden">
+            <InfoIcon size={18} />
+            ¿Cómo funciona?
+          </summary>
+          <ul className="mt-1 list-disc space-y-1.5 pl-9 text-[0.95rem] leading-snug text-white/85">
+            <li>Muestra el QR en caja con cada visita. Cada día suma un sello como máximo.</li>
+            <li>Con Google Wallet tu tarjeta queda siempre a mano; sin Wallet, esta página también sirve.</li>
+            <li>
+              Si Wallet dice «Something went wrong», es una limitación del modo demo: solo cuentas
+              de prueba autorizadas pueden guardar el pase.
+            </li>
+          </ul>
+        </details>
       </div>
 
-      {recovered && (
-        <p className="rounded-xl bg-emerald-50 p-3 text-center text-sm text-emerald-800">
-          Recuperamos tu tarjeta con tus sellos intactos.
-        </p>
-      )}
-
-      <div className="rounded-3xl border border-neutral-200 bg-white p-6 text-center shadow-sm">
-        <h3 className="font-semibold">Muestra este QR en la caja</h3>
-        <p className="mt-1 text-sm text-neutral-500">
-          Cada visita suma un sello. También puedes guardarlo en tu Wallet.
-        </p>
-        <div className="mt-5 flex justify-center">
-          <QrCode value={scanUrl} />
+      {/* Dock: Wallet es la acción principal, el QR es la alternativa inmediata. */}
+      <div className="sticky bottom-0 mt-auto border-t border-white/15 bg-lito px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3">
+        <div aria-live="polite" className="empty:hidden">
+          {walletError && (
+            <p className="mb-3 flex items-start gap-2 rounded-lg bg-aviso-soft p-3 text-[0.95rem] leading-snug text-tinta">
+              <AlertIcon size={18} className="mt-0.5 shrink-0 text-aviso" />
+              <span>{walletError}</span>
+            </p>
+          )}
+          {walletLoading && !walletError && (
+            <p className="mb-2 text-center text-[0.95rem] font-semibold text-white">
+              Preparando tu pase de Google Wallet…
+            </p>
+          )}
         </div>
-        {scanUrl && <p className="mt-3 break-all text-xs text-neutral-400">{scanUrl}</p>}
-
-        {walletUrl ? (
-          <a
-            href={walletUrl}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white"
-          >
-            Agregar a Google Wallet →
-          </a>
-        ) : (
+        <div className="flex gap-3">
+          {walletUrl ? (
+            <a href={walletUrl} className={`${btnCanary} flex-1`}>
+              <ExternalIcon size={20} />
+              Abrir en Google Wallet
+            </a>
+          ) : (
+            <button
+              type="button"
+              onClick={onAddWallet}
+              disabled={walletLoading}
+              className={`${btnInk} flex-1 ${walletSaved ? "" : "ring-2 ring-white/70"}`}
+            >
+              {walletLoading ? (
+                <span className="spin inline-block h-5 w-5 rounded-full border-2 border-white/40 border-t-white" aria-hidden="true" />
+              ) : (
+                <WalletIcon size={20} />
+              )}
+              {walletSaved ? "Volver a abrir Wallet" : "Agregar a Google Wallet"}
+            </button>
+          )}
           <button
             type="button"
-            onClick={onAddWallet}
-            disabled={walletLoading}
-            className="mt-5 w-full rounded-xl bg-black px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+            onClick={openQr}
+            aria-label="Mostrar QR en caja"
+            className={`${btnOutlineLight} shrink-0 px-4`}
           >
-            {walletLoading ? "Generando pase..." : "Agregar a Google Wallet"}
+            <QrIcon size={22} />
+            <span className="hidden sm:inline">Mostrar QR</span>
           </button>
-        )}
-        {walletError && <p className="mt-3 text-xs text-amber-700">{walletError}</p>}
-        <p className="mt-4 text-[11px] leading-relaxed text-neutral-400">
-          Google Wallet solo emite pases en modo demo a cuentas con rol Admin/Developer en el
-          issuer. Si ves «Something went wrong», revisa la cuenta de Google del dispositivo.
-        </p>
+        </div>
       </div>
+
+      <dialog
+        ref={dialogRef}
+        onClick={(e) => {
+          if (e.target === dialogRef.current) closeQr();
+        }}
+        aria-labelledby="qr-title"
+        className="m-auto w-[min(92vw,26rem)] rounded-[10px] border-0 bg-transparent p-0 text-tinta backdrop:bg-tinta/85"
+      >
+        <div className="stock relative rounded-[10px] border-2 border-tinta p-6 text-center">
+          <button
+            type="button"
+            onClick={closeQr}
+            className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-lg text-tinta hover:bg-tinta/10"
+            aria-label="Cerrar"
+          >
+            <CloseIcon size={22} />
+          </button>
+          <h2 id="qr-title" className="lettering px-8 text-[1.5rem]">
+            Muestra este QR en caja
+          </h2>
+          <p className="mt-2 text-[0.95rem] text-tinta-soft">
+            {customerName}, sube el brillo de la pantalla para que lo lean más rápido.
+          </p>
+          <div className="mt-4 flex justify-center">
+            <QrCode value={scanUrl} size={240} label={`QR de la tarjeta de ${customerName}`} />
+          </div>
+          {code && (
+            <p className="mt-4">
+              <span className="label-caps block text-[0.85rem] text-tinta-soft">
+                ¿No lee el QR? Dicta este código
+              </span>
+              <span className="lettering num mt-1 block text-[1.9rem] tracking-[0.08em]">{code}</span>
+            </p>
+          )}
+        </div>
+      </dialog>
     </div>
   );
 }

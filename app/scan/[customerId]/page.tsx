@@ -3,7 +3,13 @@ import ScanClient from "./scan-client";
 
 export default function ScanPassPage() {
   return (
-    <Suspense fallback={<div className="flex min-h-screen items-center justify-center">Cargando...</div>}>
+    <Suspense
+      fallback={
+        <div role="status" className="flex min-h-screen items-center justify-center bg-lito-deep text-lg font-semibold text-white">
+          Cargando…
+        </div>
+      }
+    >
       <ScanClient />
     </Suspense>
   );

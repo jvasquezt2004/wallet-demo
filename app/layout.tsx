@@ -1,21 +1,30 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Barlow, Barlow_Condensed, Bowlby_One } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Rótulo de etiqueta de caja: letra gruesa para nombres y banderas.
+const display = Bowlby_One({
+  variable: "--f-display",
   subsets: ["latin"],
+  weight: "400",
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const body = Barlow({
+  variable: "--f-body",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
 
-// Todas las páginas cargan datos de Convex en el cliente, así que las
-// navegaciones no pueden ser "instantáneas". Desactivamos la validación
-// (solo afecta al overlay de desarrollo, no al build ni al runtime).
+const label = Barlow_Condensed({
+  variable: "--f-label",
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+});
+
+// Todas las páginas cargan datos en el cliente, así que las navegaciones no
+// pueden ser "instantáneas". Desactivamos la validación (solo afecta al overlay
+// de desarrollo, no al build ni al runtime).
 export const instant = false;
 
 export const metadata: Metadata = {
@@ -26,16 +35,16 @@ export const metadata: Metadata = {
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#1e293b",
+  themeColor: "#1b2a8f",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} ${label.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-neutral-50 text-neutral-900">
+      <body className="min-h-full">
         <Providers>{children}</Providers>
       </body>
     </html>
