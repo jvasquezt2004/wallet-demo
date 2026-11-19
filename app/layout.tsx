@@ -1,25 +1,18 @@
 import type { Metadata, Viewport } from "next";
-import { Barlow, Barlow_Condensed, Bowlby_One } from "next/font/google";
+import { Bricolage_Grotesque, Geist } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
 
-// Rótulo de etiqueta de caja: letra gruesa para nombres y banderas.
-const display = Bowlby_One({
+// Titulares con carácter; el resto de la interfaz va en Geist.
+const display = Bricolage_Grotesque({
   variable: "--f-display",
   subsets: ["latin"],
-  weight: "400",
+  weight: ["700", "800"],
 });
 
-const body = Barlow({
+const body = Geist({
   variable: "--f-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
-});
-
-const label = Barlow_Condensed({
-  variable: "--f-label",
-  subsets: ["latin"],
-  weight: ["500", "600", "700"],
 });
 
 // Todas las páginas cargan datos en el cliente, así que las navegaciones no
@@ -42,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="es"
-      className={`${display.variable} ${body.variable} ${label.variable} h-full antialiased`}
+      className={`${display.variable} ${body.variable} h-full antialiased`}
     >
       <body className="min-h-full">
         <Providers>{children}</Providers>

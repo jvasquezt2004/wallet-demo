@@ -43,8 +43,8 @@ const slugify = (value: string) =>
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");
 
-const panel = "rounded-[10px] border border-tinta/20 bg-white p-5 sm:p-6";
-const sectionTitle = "lettering text-[1.35rem] leading-tight";
+const panel = "rounded-2xl border border-tinta/10 bg-white p-5 shadow-soft sm:p-6";
+const sectionTitle = "display text-[1.35rem] leading-tight";
 
 function ColorField({
   id,
@@ -68,7 +68,7 @@ function ColorField({
           aria-label={`${label} (selector)`}
           value={/^#[0-9a-f]{6}$/i.test(value) ? value : "#000000"}
           onChange={(e) => onChange(e.target.value)}
-          className="h-12 w-12 shrink-0 rounded-lg"
+          className="h-12 w-12 shrink-0 rounded-xl"
         />
         <input
           id={id}
@@ -229,7 +229,7 @@ export default function AdminPage() {
       <main className="mx-auto max-w-6xl px-4 pb-28 pt-7 sm:px-8 lg:pb-10">
         <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-3">
           <div>
-            <h1 className="lettering text-[2rem] sm:text-[2.4rem]">Tu tarjeta de sellos</h1>
+            <h1 className="display text-[2rem] sm:text-[2.4rem]">Tu tarjeta de sellos</h1>
             <p className="mt-2 max-w-xl text-[1.05rem] text-tinta-soft">
               Pon tu marca, define los premios y publícala.{" "}
               <span className="hidden lg:inline">Lo que ves a la derecha es lo que verá el cliente.</span>
@@ -240,7 +240,7 @@ export default function AdminPage() {
           </div>
           {restaurant !== undefined && !loadError && (
             <p
-              className={`label-caps inline-flex items-center gap-2 rounded-full border-2 px-3.5 py-1.5 text-[0.95rem] ${
+              className={`label font-semibold inline-flex items-center gap-2 rounded-full border px-3.5 py-1.5 text-[0.95rem] ${
                 published
                   ? "border-hoja bg-hoja-soft text-hoja"
                   : "border-tinta/40 bg-white text-tinta-soft"
@@ -256,8 +256,8 @@ export default function AdminPage() {
         </div>
 
         {loadError ? (
-          <div role="alert" className="mt-8 rounded-[10px] border-2 border-tomate bg-white p-6">
-            <h2 className="lettering text-[1.35rem] text-tomate-deep">
+          <div role="alert" className="mt-8 rounded-2xl border-2 border-tomate bg-white p-6">
+            <h2 className="display text-[1.35rem] text-tomate-deep">
               No se pudo cargar el restaurante
             </h2>
             <p className="mt-2 text-[1rem] font-semibold">{loadError.message}</p>
@@ -362,7 +362,7 @@ export default function AdminPage() {
                           type="button"
                           aria-pressed={selected}
                           onClick={() => applyTemplate(key)}
-                          className={`flex min-h-12 items-center gap-3 rounded-lg border-2 px-3.5 text-[1rem] font-bold transition-colors ${
+                          className={`flex min-h-12 items-center gap-3 rounded-xl border-2 px-3.5 text-[1rem] font-bold transition-colors ${
                             selected
                               ? "border-tinta bg-tinta text-white"
                               : "border-tinta/30 bg-white hover:border-tinta"
@@ -409,7 +409,7 @@ export default function AdminPage() {
                 {(textContrast < 4.5 || accentContrast < 3) && (
                   <p
                     role="status"
-                    className="flex items-start gap-2.5 rounded-lg bg-aviso-soft p-3.5 text-[0.95rem] leading-snug"
+                    className="flex items-start gap-2.5 rounded-xl bg-aviso-soft p-3.5 text-[0.95rem] leading-snug"
                   >
                     <AlertIcon size={20} className="mt-0.5 shrink-0 text-aviso" />
                     <span>
@@ -457,7 +457,7 @@ export default function AdminPage() {
                 </p>
 
                 {form.rewards.length === 0 ? (
-                  <p className="rounded-lg border-2 border-dashed border-tinta/30 p-4 text-[1rem] text-tinta-soft">
+                  <p className="rounded-xl border-2 border-dashed border-tinta/30 p-4 text-[1rem] text-tinta-soft">
                     Aún no hay recompensas. Añade la primera para que los clientes tengan un premio
                     al que llegar.
                   </p>
@@ -466,7 +466,7 @@ export default function AdminPage() {
                     {form.rewards.map((reward, index) => (
                       <li
                         key={reward.id}
-                        className="grid gap-3 rounded-lg border border-tinta/20 bg-mesa p-3 sm:grid-cols-[minmax(0,1fr)_6.5rem_minmax(0,1.4fr)_auto] sm:items-end"
+                        className="grid gap-3 rounded-xl border border-tinta/20 bg-mesa p-3 sm:grid-cols-[minmax(0,1fr)_6.5rem_minmax(0,1.4fr)_auto] sm:items-end"
                       >
                         <div>
                           <label htmlFor={`r-label-${index}`} className={fieldLabel}>
@@ -515,7 +515,7 @@ export default function AdminPage() {
                               rewards: prev.rewards.filter((_, i) => i !== index),
                             }))
                           }
-                          className="flex min-h-12 items-center justify-center rounded-lg px-3.5 text-[0.95rem] font-bold text-tomate-deep hover:bg-tomate/10 sm:w-12 sm:px-0"
+                          className="flex min-h-12 items-center justify-center rounded-xl px-3.5 text-[0.95rem] font-bold text-tomate-deep hover:bg-tomate/10 sm:w-12 sm:px-0"
                           aria-label={`Quitar ${reward.label || "recompensa"}`}
                         >
                           <span className="sm:hidden">Quitar</span>
@@ -553,7 +553,7 @@ export default function AdminPage() {
                       Imprime este QR en el mostrador o en las mesas. Quien lo escanee crea su
                       tarjeta en segundos.
                     </p>
-                    <p className="num mt-3 break-all rounded-lg bg-mesa px-3 py-2 text-[0.95rem] font-semibold">
+                    <p className="num mt-3 break-all rounded-xl bg-mesa px-3 py-2 text-[0.95rem] font-semibold">
                       {joinUrl || "…"}
                     </p>
                     <div className="mt-3 flex flex-wrap gap-2.5">
@@ -594,7 +594,7 @@ export default function AdminPage() {
                 <h2 id="sec-preview" className={`${sectionTitle} mb-3`}>
                   Vista previa
                 </h2>
-                <div className="rounded-[10px] bg-lito p-4 sm:p-5">
+                <div className="rounded-3xl bg-lito p-4 sm:p-5">
                   <StampCard
                     restaurant={{
                       name: form.name || "Tu restaurante",
@@ -635,7 +635,7 @@ export default function AdminPage() {
       </main>
 
       {restaurant !== undefined && !loadError && (
-        <div className="fixed inset-x-0 bottom-0 z-20 border-t-2 border-tinta bg-white px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 lg:static lg:mx-auto lg:max-w-6xl lg:border-0 lg:bg-transparent lg:px-8 lg:pb-12 lg:pt-0">
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-tinta/15 bg-white px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 lg:static lg:mx-auto lg:max-w-6xl lg:border-0 lg:bg-transparent lg:px-8 lg:pb-12 lg:pt-0">
           <div className="mx-auto flex max-w-6xl flex-wrap items-center gap-3">
             <button onClick={handleSave} disabled={saving || (!dirty && restaurantId !== null)} className={btnInk}>
               {saving ? "Guardando…" : "Guardar cambios"}

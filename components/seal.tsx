@@ -1,25 +1,5 @@
-// Sello de calidad: el sello de la tarjeta es un sello festoneado de etiqueta de
-// caja. Vacío es un contorno con su número; entintado lleva la estrella.
-
-const SCALLOP = (() => {
-  const points: string[] = [];
-  for (let deg = 0; deg <= 360; deg += 2) {
-    const t = (deg * Math.PI) / 180;
-    const r = 43 + 4 * Math.abs(Math.cos(12 * t));
-    points.push(`${(50 + r * Math.sin(t)).toFixed(2)},${(50 - r * Math.cos(t)).toFixed(2)}`);
-  }
-  return `M${points.join("L")}Z`;
-})();
-
-const STAR = (() => {
-  const points: string[] = [];
-  for (let i = 0; i < 10; i++) {
-    const r = i % 2 === 0 ? 19 : 8.2;
-    const t = (i * Math.PI) / 5;
-    points.push(`${(50 + r * Math.sin(t)).toFixed(2)},${(50 - r * Math.cos(t)).toFixed(2)}`);
-  }
-  return `M${points.join("L")}Z`;
-})();
+// Sello de la tarjeta: un círculo que se entinta. Vacío es un contorno con su
+// número; sellado lleva una marca de verificación.
 
 type SealProps = {
   number: number;
@@ -28,10 +8,10 @@ type SealProps = {
   ink: string;
   /** Color que se lee sobre la tinta. */
   onInk: string;
-  /** Color del texto de la etiqueta, para el número del sello vacío. */
+  /** Color del texto de la tarjeta, para el número del sello vacío. */
   text: string;
   reward?: boolean;
-  /** El sello acaba de caerse: animación de impresión fuera de registro. */
+  /** El sello acaba de caer: animación de impresión fuera de registro. */
   landing?: boolean;
   delayMs?: number;
 };
@@ -48,7 +28,11 @@ export function Seal({
 }: SealProps) {
   const delay = { animationDelay: `${delayMs}ms` };
   return (
-    <span className="relative block aspect-square w-full" role="img" aria-label={`Sello ${number}${reward ? ", premio" : ""}${filled ? ", sellado" : ""}`}>
+    <span
+      className="relative block aspect-square w-full"
+      role="img"
+      aria-label={`Sello ${number}${reward ? ", premio" : ""}${filled ? ", sellado" : ""}`}
+    >
       {landing && (
         <svg
           viewBox="0 0 100 100"
@@ -56,7 +40,7 @@ export function Seal({
           style={delay}
           aria-hidden="true"
         >
-          <path d={SCALLOP} fill="none" stroke={text} strokeWidth="2" />
+          <circle cx="50" cy="50" r="42" fill="none" stroke={text} strokeWidth="2" />
         </svg>
       )}
       <svg
@@ -65,35 +49,27 @@ export function Seal({
         style={delay}
         aria-hidden="true"
       >
-        <path
-          d={SCALLOP}
-          fill={filled ? ink : "none"}
-          stroke={ink}
-          strokeWidth={filled ? 0 : 3}
-        />
         <circle
           cx="50"
           cy="50"
-          r="35"
-          fill="none"
-          stroke={filled ? onInk : ink}
-          strokeWidth="1.6"
-          strokeOpacity={filled ? 0.75 : 0.5}
-          strokeDasharray={filled ? undefined : "2.5 4"}
+          r={reward ? 38 : 42}
+          fill={filled ? ink : "none"}
+          stroke={ink}
+          strokeWidth={filled ? 0 : 3}
+          strokeOpacity={filled ? 1 : 0.55}
         />
         {reward && (
-          <circle
-            cx="50"
-            cy="50"
-            r="30"
-            fill="none"
-            stroke={filled ? onInk : ink}
-            strokeWidth="1.6"
-            strokeOpacity={filled ? 0.75 : 0.6}
-          />
+          <circle cx="50" cy="50" r="47" fill="none" stroke={ink} strokeWidth="2.5" />
         )}
         {filled ? (
-          <path d={STAR} fill={onInk} />
+          <path
+            d="M33 51l12 12 22-26"
+            fill="none"
+            stroke={onInk}
+            strokeWidth="8"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
         ) : (
           <text
             x="50"
@@ -101,8 +77,8 @@ export function Seal({
             textAnchor="middle"
             dominantBaseline="central"
             fill={text}
-            fillOpacity="0.9"
-            style={{ fontFamily: "var(--f-label)", fontWeight: 700, fontSize: 34 }}
+            fillOpacity="0.85"
+            style={{ fontFamily: "var(--f-body)", fontWeight: 600, fontSize: 30 }}
           >
             {number}
           </text>

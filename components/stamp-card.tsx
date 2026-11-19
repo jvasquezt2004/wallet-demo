@@ -21,7 +21,7 @@ type Props = {
   unlockedRewardIds?: string[];
   /** Sellos ya vistos por el cliente: los siguientes se animan al caer. */
   landingFrom?: number;
-  /** Oculta recompensas y placa de progreso (vista previa del registro). */
+  /** Oculta recompensas y progreso (vista previa del registro). */
   compact?: boolean;
 };
 
@@ -64,111 +64,65 @@ export function StampCard({
   const max = cardMaxStamps(restaurant);
   const stamps = Math.max(0, Math.min(max, rawStamps));
   const cols = columnsFor(max);
+  const panelBg = mix(bg, text, 0.09);
+  const hairline = mix(bg, text, 0.16);
 
   const nextReward = rewards.find(
     (reward) => !unlockedRewardIds.includes(reward.id) && stamps < reward.stampsRequired
   );
-  const ribbonShade = mix(seal, "#000000", 0.28);
-  const nameSize =
-    restaurant.name.length <= 12 ? "1.75rem" : restaurant.name.length <= 20 ? "1.4rem" : "1.15rem";
+  const progress = max > 0 ? (stamps / max) * 100 : 0;
 
   return (
     <article
-      className="relative isolate overflow-hidden rounded-[10px] px-5 pb-0 pt-7 text-left sm:px-6"
+      className="relative overflow-hidden rounded-3xl p-5 text-left sm:p-6"
       style={{
         backgroundColor: bg,
         color: text,
-        // Margen de papel de la etiqueta: la tarjeta se ve aunque su fondo se parezca al de la página.
-        boxShadow: "0 0 0 3px var(--papel)",
+        // Un borde claro para que la tarjeta se distinga aunque su fondo se parezca al de la página.
+        boxShadow: "0 0 0 1px rgb(255 255 255 / 0.3), var(--shadow-lift)",
       }}
       aria-label={`Tarjeta de sellos de ${restaurant.name}`}
     >
-      {/* Rayos de fondo y marco interior: el marco de la etiqueta impresa. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10"
-        style={{
-          background: `repeating-conic-gradient(from 0deg at 50% 14%, ${mix(bg, seal, 0.075)} 0deg 6deg, transparent 6deg 12deg)`,
-        }}
-      />
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-[7px] -z-10 rounded-[6px] border-[1.5px]"
-        style={{ borderColor: mix(bg, seal, 0.6) }}
-      />
-
-      {/* Medallón del logo */}
-      <div className="relative mx-auto flex h-16 w-16 items-center justify-center">
+      <header className="flex items-center gap-3.5">
         {restaurant.logoUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={restaurant.logoUrl}
             alt=""
-            className="h-16 w-16 rounded-full border-[3px] bg-white object-contain p-1"
-            style={{ borderColor: seal }}
+            className="h-12 w-12 shrink-0 rounded-2xl bg-white object-contain p-1"
           />
         ) : (
           <span
-            className="lettering flex h-16 w-16 items-center justify-center rounded-full border-[3px] text-[1.75rem]"
-            style={{ backgroundColor: seal, color: onSeal, borderColor: mix(seal, bg, 0.35) }}
+            className="display flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-[1.4rem]"
+            style={{ backgroundColor: seal, color: onSeal }}
             aria-hidden="true"
           >
             {restaurant.name.charAt(0).toUpperCase() || "S"}
           </span>
         )}
-      </div>
-
-      {/* Bandera con el nombre */}
-      <div className="relative mx-auto mt-3 w-[calc(100%-2.25rem)]">
-        <span
-          aria-hidden="true"
-          className="absolute -left-[22px] top-[9px] h-full w-[34px]"
-          style={{
-            backgroundColor: ribbonShade,
-            clipPath: "polygon(0 0, 100% 0, 100% 100%, 0 100%, 32% 50%)",
-          }}
-        />
-        <span
-          aria-hidden="true"
-          className="absolute -right-[22px] top-[9px] h-full w-[34px]"
-          style={{
-            backgroundColor: ribbonShade,
-            clipPath: "polygon(0 0, 100% 0, 68% 50%, 100% 100%, 0 100%)",
-          }}
-        />
-        <h2
-          className="lettering lettering-shadow relative px-4 py-3 text-center"
-          style={
-            {
-              backgroundColor: seal,
-              color: onSeal,
-              fontSize: nameSize,
-              "--lettering-ink": ribbonShade,
-              overflowWrap: "anywhere",
-            } as React.CSSProperties
-          }
-        >
-          {restaurant.name}
-        </h2>
-      </div>
-
-      {(customerName || totalVisits !== undefined) && (
-        <div
-          className="label-caps mt-3 flex items-center justify-between gap-3 text-[0.8rem]"
-          style={{ color: quiet }}
-        >
-          <span className="min-w-0 truncate">{customerName ? `Para ${customerName}` : ""}</span>
-          {totalVisits !== undefined && (
-            <span className="num shrink-0">
-              {totalVisits} {totalVisits === 1 ? "visita" : "visitas"}
-            </span>
+        <div className="min-w-0 flex-1">
+          <h2
+            className="display text-[1.4rem] leading-[1.1]"
+            style={{ overflowWrap: "anywhere" }}
+          >
+            {restaurant.name}
+          </h2>
+          {(customerName || totalVisits !== undefined) && (
+            <p className="mt-0.5 truncate text-[0.95rem]" style={{ color: quiet }}>
+              {customerName}
+              {customerName && totalVisits !== undefined ? " · " : ""}
+              {totalVisits !== undefined && (
+                <span className="num">
+                  {totalVisits} {totalVisits === 1 ? "visita" : "visitas"}
+                </span>
+              )}
+            </p>
           )}
         </div>
-      )}
+      </header>
 
-      {/* Sellos */}
       <ol
-        className="mx-auto mt-4 grid list-none justify-center gap-x-2.5 gap-y-3 p-0"
+        className="mx-auto mt-6 grid list-none justify-center gap-x-3 gap-y-3.5 p-0"
         style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 4.4rem))` }}
         aria-label={`${stamps} de ${max} sellos`}
       >
@@ -191,7 +145,7 @@ export function StampCard({
               />
               {isReward && (
                 <span
-                  className="label-caps mt-1 text-[0.72rem] leading-none"
+                  className="mt-1 text-[0.75rem] font-semibold leading-none"
                   style={{ color: accent }}
                 >
                   Premio
@@ -202,21 +156,53 @@ export function StampCard({
         })}
       </ol>
 
+      {!compact && (
+        <div className="mt-6 rounded-2xl p-4" style={{ backgroundColor: panelBg }}>
+          <p className="display whitespace-nowrap text-[1.5rem] leading-none">
+            <span className="num">{stamps}</span>
+            <span className="num text-[1rem]" style={{ color: quiet }}>
+              {" "}
+              de {max} sellos
+            </span>
+          </p>
+          <p className="mt-1.5 text-[0.95rem] font-semibold">
+            {nextReward ? (
+              <span style={{ color: quiet }}>
+                Faltan {nextReward.stampsRequired - stamps} para{" "}
+                <span style={{ color: text }}>{nextReward.label}</span>
+              </span>
+            ) : (
+              restaurant.rewardText || "Tarjeta completa"
+            )}
+          </p>
+          <div
+            className="mt-3 h-2 overflow-hidden rounded-full"
+            style={{ backgroundColor: hairline }}
+            role="presentation"
+          >
+            <div
+              className="h-full rounded-full transition-[width] duration-700"
+              style={{ width: `${progress}%`, backgroundColor: seal }}
+            />
+          </div>
+        </div>
+      )}
+
       {!compact && rewards.length > 0 && (
-        <ul className="mt-5 list-none divide-y p-0" style={{ borderColor: mix(bg, text, 0.2) }}>
-          {rewards.map((reward) => {
+        <ul className="mt-2 list-none p-0">
+          {rewards.map((reward, i) => {
             const unlocked =
               unlockedRewardIds.includes(reward.id) || stamps >= reward.stampsRequired;
             return (
               <li
                 key={reward.id}
-                className="flex items-center gap-3 py-2.5"
-                style={{ borderColor: mix(bg, text, 0.2) }}
+                className="flex items-center gap-3 py-3"
+                style={i > 0 ? { borderTop: `1px solid ${hairline}` } : undefined}
               >
                 <span
-                  className="label-caps flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 text-[0.95rem]"
+                  className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[0.9rem] font-semibold"
                   style={{
-                    borderColor: seal,
+                    border: `2px solid ${seal}`,
                     backgroundColor: unlocked ? seal : "transparent",
                     color: unlocked ? onSeal : accent,
                   }}
@@ -225,53 +211,18 @@ export function StampCard({
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block font-semibold leading-tight">{reward.label}</span>
-                  <span className="block text-sm leading-snug" style={{ color: quiet }}>
+                  <span className="block text-[0.9rem] leading-snug" style={{ color: quiet }}>
                     {unlocked
                       ? "Desbloqueada. Reclámala en caja."
                       : reward.promoText ||
                         `Te faltan ${Math.max(0, reward.stampsRequired - stamps)} sellos`}
                   </span>
                 </span>
-                {!unlocked && (
-                  <span className="label-caps num shrink-0 text-[0.85rem]" style={{ color: quiet }}>
-                    {reward.stampsRequired} sellos
-                  </span>
-                )}
               </li>
             );
           })}
         </ul>
       )}
-
-      {/* Placa de progreso: el papel de la etiqueta al pie. */}
-      {!compact && (
-        <div
-          className="stock -mx-5 mt-5 flex items-center justify-between gap-4 px-5 py-3.5 sm:-mx-6 sm:px-6"
-          style={{ color: "var(--tinta)" }}
-        >
-          <p className="lettering flex items-baseline gap-1 text-[2.1rem] leading-none">
-            <span className="num">{stamps}</span>
-            <span className="num text-[1.15rem]" style={{ color: "var(--tinta-soft)" }}>
-              /{max}
-            </span>
-            <span className="sr-only"> sellos</span>
-          </p>
-          <p className="min-w-0 text-right text-[0.95rem] font-semibold leading-tight">
-            {nextReward ? (
-              <>
-                <span className="block" style={{ color: "var(--tinta-soft)" }}>
-                  Faltan {nextReward.stampsRequired - stamps}{" "}
-                  {nextReward.stampsRequired - stamps === 1 ? "sello" : "sellos"} para
-                </span>
-                <span className="block truncate">{nextReward.label}</span>
-              </>
-            ) : (
-              <span className="block">{restaurant.rewardText || "Tarjeta completa"}</span>
-            )}
-          </p>
-        </div>
-      )}
-      {compact && <div className="h-5" />}
     </article>
   );
 }

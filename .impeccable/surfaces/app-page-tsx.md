@@ -19,7 +19,7 @@ Unresolved: none.
 
 THESIS: Every restaurant's stamp card is printed like a prize produce-crate label, and each stamp is a grade seal inked onto it. Refuses the dark-slate fintech wallet card with gold stars and the kraft-paper punch card.
 
-OWN-WORLD: Flat litho inks on a drenched ultramarine ground: ultramarine #1B2A8F, tomato #D42A14, canary #FFC72C, label stock #F4ECD8 reserved for label objects, keyline ink #10143A, leaf green for success only. Heavy lettering face (Bowlby One) for banners and names, Barlow / Barlow Condensed for everything read. Scalloped grade seals, ribbon banners with notched tails, sunburst rays, 2px keylines. Recognisable with the content removed.
+OWN-WORLD: Flat litho inks on a drenched ultramarine ground: ultramarine #1B2A8F, tomato #D42A14, canary #FFC72C, label stock #F4ECD8 reserved for label objects, keyline ink #10143A, leaf green for success only. Modernized after review: Bricolage Grotesque 800 for headlines and names, Geist for everything read, sentence-case labels. Flat ultramarine ground, large radii (12/16/24px), soft shadows, circular stamp seals with a check, progress bar, no rays, ribbons, paper texture or text shadows. The scalloped star seal remains only as the wordmark. Home is three panes (Configurar, Escanear, Dashboard) in white, canary and deep blue.
 
 STORY: The owner sees a real, finished customer card within one screen and believes diners would keep it; then follows four steps (configure, share, stamp, measure). The diner registers, sees their card, saves it to Google Wallet, shows the QR at the till.
 

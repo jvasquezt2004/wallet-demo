@@ -48,11 +48,11 @@ export function ScanResultView({
   return (
     <section
       role="status"
-      className={`rise relative overflow-hidden rounded-[10px] border-2 border-tinta px-5 pb-5 pt-7 text-center ${tone}`}
+      className={`rise relative overflow-hidden rounded-3xl px-5 pb-5 pt-7 text-center ${tone}`}
     >
       <span
-        className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full border-2 ${
-          isDuplicate ? "border-tinta bg-white text-aviso" : "border-tinta bg-white text-tinta"
+        className={`mx-auto flex h-14 w-14 items-center justify-center rounded-full ${
+          isDuplicate ? "bg-white text-aviso" : "bg-white text-tinta"
         }`}
       >
         {isDuplicate ? (
@@ -64,7 +64,7 @@ export function ScanResultView({
         )}
       </span>
 
-      <h2 className="lettering mt-4 text-[1.7rem] leading-[1.1]">
+      <h2 className="display mt-4 text-[1.7rem] leading-[1.1]">
         {isDuplicate
           ? "Ya sumó un sello hoy"
           : isReward
@@ -84,7 +84,7 @@ export function ScanResultView({
           {isReward && stamped.unlockedRewards.length > 0 && (
             <ul className="mx-auto mt-4 max-w-sm list-none space-y-2 p-0 text-left">
               {stamped.unlockedRewards.map((reward) => (
-                <li key={reward.id} className="rounded-lg border-2 border-tinta bg-white px-3.5 py-2.5">
+                <li key={reward.id} className="rounded-xl bg-white px-3.5 py-2.5">
                   <p className="text-[1.05rem] font-bold leading-tight">{reward.label}</p>
                   {reward.promoText && (
                     <p className="mt-0.5 text-[0.95rem] leading-snug text-tinta-soft">

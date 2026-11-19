@@ -30,7 +30,7 @@ export function Steps({
                 />
               )}
               <span
-                className={`label-caps relative flex h-8 w-8 items-center justify-center rounded-full border-2 text-[0.95rem] ${
+                className={`label font-semibold relative flex h-8 w-8 items-center justify-center rounded-full border-2 text-[0.95rem] ${
                   done
                     ? "border-canario bg-canario text-tinta"
                     : active
@@ -42,7 +42,7 @@ export function Steps({
               </span>
             </span>
             <span
-              className={`label-caps text-[0.82rem] leading-tight ${
+              className={`label font-semibold text-[0.9rem] leading-tight ${
                 active ? "text-white" : done ? "text-white/90" : "text-white/75"
               }`}
             >

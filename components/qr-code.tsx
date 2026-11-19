@@ -14,7 +14,7 @@ export function QrCode({
   label?: string;
 }) {
   return (
-    <div className="inline-block rounded-xl border-2 border-tinta bg-white p-3.5" role="img" aria-label={label}>
+    <div className="inline-block rounded-2xl border border-tinta/15 bg-white p-3.5" role="img" aria-label={label}>
       <QRCodeSVG value={value || " "} size={size} level="M" marginSize={0} fgColor="#10143a" bgColor="#ffffff" />
     </div>
   );

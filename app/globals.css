@@ -1,10 +1,8 @@
 @import "tailwindcss";
 
 /*
- * Sello Club · etiqueta de caja.
- * Tintas planas de litografía: ultramarino, tomate, canario, papel de etiqueta y
- * una tinta casi negra para las líneas. El papel solo se usa en objetos-etiqueta;
- * las pantallas de trabajo usan "mesa", un blanco frío.
+ * Sello Club. Tintas planas: ultramarino, tomate y canario sobre una tinta casi
+ * negra. Formas redondeadas, poca decoración y una sola letra de titular.
  */
 :root {
   --lito: #1b2a8f;
@@ -45,7 +43,9 @@
 
   --font-display: var(--f-display);
   --font-sans: var(--f-body);
-  --font-label: var(--f-label);
+
+  --shadow-soft: 0 1px 2px rgb(16 20 58 / 0.06), 0 10px 28px -14px rgb(16 20 58 / 0.28);
+  --shadow-lift: 0 2px 4px rgb(16 20 58 / 0.08), 0 24px 48px -20px rgb(8 12 50 / 0.55);
 }
 
 html {
@@ -81,13 +81,11 @@ p {
 :focus-visible {
   outline: 3px solid var(--canario);
   outline-offset: 2px;
-  box-shadow: 0 0 0 5px var(--tinta);
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
 }
 
 .on-mesa :focus-visible {
   outline-color: var(--lito);
-  box-shadow: 0 0 0 5px #fff;
 }
 
 input,
@@ -105,7 +103,7 @@ input[type="color"] {
   -webkit-appearance: none;
   appearance: none;
   padding: 0;
-  border: 2px solid var(--tinta);
+  border: 1px solid color-mix(in srgb, var(--tinta) 25%, transparent);
   background: none;
   cursor: pointer;
 }
@@ -114,11 +112,11 @@ input[type="color"]::-webkit-color-swatch-wrapper {
 }
 input[type="color"]::-webkit-color-swatch {
   border: 0;
-  border-radius: 0.4rem;
+  border-radius: 0.75rem;
 }
 input[type="color"]::-moz-color-swatch {
   border: 0;
-  border-radius: 0.4rem;
+  border-radius: 0.75rem;
 }
 
 input[type="range"] {
@@ -129,38 +127,18 @@ input[type="range"] {
   font-variant-numeric: tabular-nums;
 }
 
-/* Letras de rótulo: la segunda tinta corre un poco, como en una impresión real. */
-.lettering {
+/* Titulares: una sola letra, pesada y apretada. */
+.display {
   font-family: var(--f-display), system-ui, sans-serif;
-  font-weight: 400;
-  letter-spacing: 0.005em;
-  line-height: 1;
-}
-.lettering-shadow {
-  text-shadow: 0.055em 0.055em 0 var(--lettering-ink, var(--tomate));
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.04;
 }
 
-.label-caps {
-  font-family: var(--f-label), system-ui, sans-serif;
+/* Etiquetas pequeñas: sentence case, semibold. */
+.label {
   font-weight: 600;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-}
-
-/* Rayos de sol detrás de las etiquetas. */
-.rays {
-  background: repeating-conic-gradient(
-    from 0deg at 50% 62%,
-    var(--lito-soft) 0deg 7.5deg,
-    var(--lito) 7.5deg 15deg
-  );
-}
-
-/* Papel de etiqueta: una trama muy fina para que no sea un color plano muerto. */
-.stock {
-  background-color: var(--papel);
-  background-image: radial-gradient(color-mix(in srgb, var(--tinta) 9%, transparent) 0.6px, transparent 0.7px);
-  background-size: 5px 5px;
+  letter-spacing: 0;
 }
 
 /* El sello cae un poco fuera de registro y se asienta. */

@@ -26,8 +26,8 @@ const dayNumber = (day: string) => new Date(`${day}T12:00:00`).getDate();
 const shortDate = (ts: number) =>
   new Date(ts).toLocaleDateString("es", { day: "numeric", month: "short" });
 
-const panel = "rounded-[10px] border border-tinta/20 bg-white p-5 sm:p-6";
-const panelTitle = "lettering text-[1.3rem] leading-tight";
+const panel = "rounded-2xl border border-tinta/10 bg-white p-5 shadow-soft sm:p-6";
+const panelTitle = "display text-[1.3rem] leading-tight";
 
 function Panel({
   title,
@@ -52,14 +52,14 @@ function Panel({
 function Metric({ label, value }: { label: string; value: number }) {
   return (
     <div className="px-4 py-4 sm:px-6">
-      <dt className="label-caps text-[0.9rem] text-tinta-soft">{label}</dt>
-      <dd className="num lettering mt-1 text-[2.2rem]">{value}</dd>
+      <dt className="label font-semibold text-[0.9rem] text-tinta-soft">{label}</dt>
+      <dd className="num display mt-1 text-[2.2rem]">{value}</dd>
     </div>
   );
 }
 
 function Empty({ children }: { children: ReactNode }) {
-  return <p className="rounded-lg bg-mesa p-4 text-[1rem] text-tinta-soft">{children}</p>;
+  return <p className="rounded-xl bg-mesa p-4 text-[1rem] text-tinta-soft">{children}</p>;
 }
 
 function VisitsChart({ data }: { data: DashboardStats["visitsByDay"] }) {
@@ -72,7 +72,7 @@ function VisitsChart({ data }: { data: DashboardStats["visitsByDay"] }) {
       <div className="flex gap-2 sm:gap-3">
         {/* Escala: tres referencias, una sola unidad. */}
         <div
-          className="num relative h-56 w-6 shrink-0 text-right text-[0.8rem] text-tinta-soft"
+          className="num relative h-56 w-6 shrink-0 text-right text-[0.85rem] text-tinta-soft"
           aria-hidden="true"
         >
           <span className="absolute right-0 top-0 -translate-y-1/2">{top}</span>
@@ -104,7 +104,7 @@ function VisitsChart({ data }: { data: DashboardStats["visitsByDay"] }) {
                   />
                   <span
                     role="tooltip"
-                    className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-lg bg-tinta px-3 py-1.5 text-[0.9rem] font-semibold text-white group-hover:block group-focus-visible:block"
+                    className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-xl bg-tinta px-3 py-1.5 text-[0.9rem] font-semibold text-white group-hover:block group-focus-visible:block"
                   >
                     {dayLong(day)} · {count} {count === 1 ? "visita" : "visitas"}
                   </span>
@@ -152,11 +152,11 @@ function VisitsChart({ data }: { data: DashboardStats["visitsByDay"] }) {
 function PanelSkeleton() {
   return (
     <div className="mt-7 space-y-6" role="status" aria-label="Cargando estadísticas">
-      <div className="h-24 animate-pulse rounded-[10px] bg-tinta/10" />
-      <div className="h-80 animate-pulse rounded-[10px] bg-tinta/10" />
+      <div className="h-24 animate-pulse rounded-2xl bg-tinta/10" />
+      <div className="h-80 animate-pulse rounded-2xl bg-tinta/10" />
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="h-64 animate-pulse rounded-[10px] bg-tinta/10" />
-        <div className="h-64 animate-pulse rounded-[10px] bg-tinta/10" />
+        <div className="h-64 animate-pulse rounded-2xl bg-tinta/10" />
+        <div className="h-64 animate-pulse rounded-2xl bg-tinta/10" />
       </div>
     </div>
   );
@@ -179,7 +179,7 @@ export default function DashboardPage() {
     <div className="on-mesa min-h-screen bg-mesa">
       <SiteNav />
       <main className="mx-auto max-w-6xl px-4 pb-12 pt-7 sm:px-8">
-        <h1 className="lettering text-[2rem] sm:text-[2.4rem]">Panel</h1>
+        <h1 className="display text-[2rem] sm:text-[2.4rem]">Panel</h1>
         <p className="mt-2 text-[1.05rem] text-tinta-soft">
           {restaurant ? restaurant.name : restaurant === null ? "Sin restaurante" : "Cargando…"} ·
           cómo se comportan tus clientes
@@ -196,8 +196,8 @@ export default function DashboardPage() {
             </Empty>
           </div>
         ) : statsError ? (
-          <div role="alert" className="mt-7 rounded-[10px] border-2 border-tomate bg-white p-6">
-            <p className="lettering text-[1.3rem] text-tomate-deep">
+          <div role="alert" className="mt-7 rounded-2xl border-2 border-tomate bg-white p-6">
+            <p className="display text-[1.3rem] text-tomate-deep">
               No se pudieron cargar las estadísticas
             </p>
             <p className="mt-2 text-[1rem] font-semibold">{statsError.message}</p>
@@ -210,7 +210,7 @@ export default function DashboardPage() {
           <PanelSkeleton />
         ) : (
           <div className="mt-7 space-y-6">
-            <dl className="grid grid-cols-2 divide-tinta/15 rounded-[10px] border border-tinta/20 bg-white sm:grid-cols-4 sm:divide-x [&>div:nth-child(n+3)]:border-t [&>div:nth-child(n+3)]:border-tinta/15 sm:[&>div:nth-child(n+3)]:border-t-0 [&>div:nth-child(even)]:border-l [&>div:nth-child(even)]:border-tinta/15 sm:[&>div:nth-child(even)]:border-l-0">
+            <dl className="grid grid-cols-2 divide-tinta/15 rounded-2xl border border-tinta/20 bg-white sm:grid-cols-4 sm:divide-x [&>div:nth-child(n+3)]:border-t [&>div:nth-child(n+3)]:border-tinta/15 sm:[&>div:nth-child(n+3)]:border-t-0 [&>div:nth-child(even)]:border-l [&>div:nth-child(even)]:border-tinta/15 sm:[&>div:nth-child(even)]:border-l-0">
               <Metric label="Visitas hoy" value={stats.visitsToday} />
               <Metric label="Visitas en 7 días" value={stats.visitsLast7Days} />
               <Metric label="Clientes nuevos (7 días)" value={stats.newCustomers.length} />
@@ -218,7 +218,7 @@ export default function DashboardPage() {
             </dl>
 
             {noVisitsYet && (
-              <div className="flex flex-wrap items-center justify-between gap-4 rounded-[10px] border-2 border-dashed border-lito/50 bg-white p-5">
+              <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border-2 border-dashed border-lito/50 bg-white p-5">
                 <p className="max-w-xl text-[1.05rem] leading-snug">
                   Aún no hay visitas registradas. En cuanto escanees la tarjeta de un cliente,
                   aquí aparecerán sus visitas y hábitos.
@@ -248,7 +248,7 @@ export default function DashboardPage() {
                         <div className="flex min-w-0 items-center gap-3">
                           <span
                             aria-hidden="true"
-                            className="lettering flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-canario text-[1rem] text-tinta"
+                            className="display flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-canario text-[1rem] text-tinta"
                           >
                             {visit.customerName.charAt(0).toUpperCase()}
                           </span>

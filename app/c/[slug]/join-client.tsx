@@ -15,7 +15,7 @@ type PassData = { customer: CustomerDTO; restaurant: RestaurantDTO };
 
 function Screen({ children }: { children: ReactNode }) {
   return (
-    <main className="rays flex min-h-[100dvh] items-center justify-center px-6 py-10 text-center text-white">
+    <main className="bg-lito flex min-h-[100dvh] items-center justify-center px-6 py-10 text-center text-white">
       <div className="max-w-sm">{children}</div>
     </main>
   );
@@ -133,7 +133,7 @@ export default function JoinClient() {
   if (!restaurant) {
     return (
       <Screen>
-        <h1 className="lettering text-[2rem]">Restaurante no encontrado</h1>
+        <h1 className="display text-[2rem]">Restaurante no encontrado</h1>
         <p className="mt-3 text-lg text-white/85">
           Revisa el enlace o vuelve a escanear el QR del local.
         </p>
@@ -144,7 +144,7 @@ export default function JoinClient() {
   if (!restaurant.published) {
     return (
       <Screen>
-        <h1 className="lettering lettering-shadow text-[2.2rem]" style={{ ["--lettering-ink" as string]: "var(--tomate)" }}>
+        <h1 className="display text-[2.2rem]">
           {restaurant.name}
         </h1>
         <p className="mt-4 text-lg text-white/85">
@@ -159,7 +159,7 @@ export default function JoinClient() {
 
   if (customerId && passData) {
     return (
-      <main className="rays min-h-[100dvh]">
+      <main className="bg-lito min-h-[100dvh]">
         <div className="mx-auto max-w-md">
           <LoyaltyCard
             customerId={customerId}
@@ -187,7 +187,7 @@ export default function JoinClient() {
   }
 
   return (
-    <main className="rays min-h-[100dvh]">
+    <main className="bg-lito min-h-[100dvh]">
       <div className="mx-auto max-w-md space-y-5 px-5 py-6">
         <Steps steps={["Tus datos", "Tu tarjeta", "Wallet"]} current={0} />
 
@@ -202,10 +202,10 @@ export default function JoinClient() {
 
         <form
           onSubmit={handleSubmit}
-          className="stock rise rise-2 space-y-4 rounded-[10px] border-2 border-tinta p-5 text-tinta"
+          className="rise rise-2 space-y-4 rounded-3xl bg-white p-5 text-tinta shadow-lift sm:p-6"
         >
           <div>
-            <h1 className="lettering text-[1.55rem] leading-[1.1]">Obtén tu tarjeta de sellos</h1>
+            <h1 className="display text-[1.6rem] leading-[1.1]">Obtén tu tarjeta de sellos</h1>
             <p className="mt-2 text-[1rem] leading-snug text-tinta-soft">
               Sin descargar apps. Si ya tenías tarjeta, usa el mismo correo y la recuperas con tus
               sellos.
@@ -246,7 +246,7 @@ export default function JoinClient() {
 
           <div aria-live="polite" className="empty:hidden">
             {error && (
-              <p className="rounded-lg border-2 border-tomate bg-white p-3 text-[0.95rem] font-semibold leading-snug text-tomate-deep">
+              <p className="rounded-xl bg-tomate/10 p-3 text-[0.95rem] font-semibold leading-snug text-tomate-deep">
                 {error}
               </p>
             )}

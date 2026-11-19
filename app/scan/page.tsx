@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import type QrScanner from "qr-scanner";
 import { ScanResultView, type ScanResult } from "@/components/scan-result";
 import { SiteNav } from "@/components/site-nav";
 import { AlertIcon, CameraIcon, KeyboardIcon } from "@/components/icons";
@@ -23,9 +24,7 @@ export default function ScanPage() {
   const [processing, setProcessing] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-  const frameRef = useRef<number | null>(null);
-  const detectorRef = useRef<InstanceType<typeof BarcodeDetectorConstructor> | null>(null);
+  const scannerRef = useRef<QrScanner | null>(null);
   const busyRef = useRef(false);
   // Cada arranque/parada de cámara incrementa el contador: un arranque que
   // termina tarde (p. ej. el doble montaje de React) ve que ya no es el vigente.
@@ -33,11 +32,8 @@ export default function ScanPage() {
 
   const stopCamera = useCallback(() => {
     runRef.current += 1;
-    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
-    frameRef.current = null;
-    streamRef.current?.getTracks().forEach((track) => track.stop());
-    streamRef.current = null;
-    if (videoRef.current) videoRef.current.srcObject = null;
+    scannerRef.current?.destroy();
+    scannerRef.current = null;
     setActive(false);
   }, []);
 
@@ -70,53 +66,38 @@ export default function ScanPage() {
 
   const startCamera = useCallback(async () => {
     setError(null);
-    if (!window.BarcodeDetector) {
-      setError(
-        "Este navegador no puede leer QR con la cámara. Usa Chrome en Android o escribe el código del cliente."
-      );
-      return;
-    }
     const run = ++runRef.current;
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: { ideal: "environment" } },
-      });
-      if (run !== runRef.current) {
-        stream.getTracks().forEach((track) => track.stop());
+      // qr-scanner usa el detector nativo cuando existe y un lector en JS en el
+      // resto (Safari en iPhone, Firefox...). Se carga solo al abrir el escáner.
+      const { default: QrScanner } = await import("qr-scanner");
+      if (run !== runRef.current) return;
+      if (!(await QrScanner.hasCamera())) {
+        setError("Este dispositivo no tiene cámara. Escribe el código del cliente.");
         return;
       }
-      streamRef.current = stream;
       const video = videoRef.current;
       if (!video) return;
-      video.srcObject = stream;
-      await video.play();
-      if (run !== runRef.current) return;
+      scannerRef.current?.destroy();
+      const scanner = new QrScanner(video, (found) => void handleCode(found.data), {
+        preferredCamera: "environment",
+        maxScansPerSecond: 12,
+        returnDetailedScanResult: true,
+        highlightScanRegion: false,
+        highlightCodeOutline: false,
+      });
+      scannerRef.current = scanner;
+      await scanner.start();
+      if (run !== runRef.current) {
+        scanner.destroy();
+        if (scannerRef.current === scanner) scannerRef.current = null;
+        return;
+      }
       setActive(true);
-
-      detectorRef.current = new window.BarcodeDetector({ formats: ["qr_code"] });
-
-      const tick = async () => {
-        if (run !== runRef.current) return;
-        if (!videoRef.current || busyRef.current) {
-          frameRef.current = requestAnimationFrame(tick);
-          return;
-        }
-        try {
-          const codes = await detectorRef.current?.detect(videoRef.current);
-          if (codes && codes.length > 0) {
-            await handleCode(codes[0].rawValue);
-            return;
-          }
-        } catch {
-          // Un frame fallido no detiene el escáner.
-        }
-        frameRef.current = requestAnimationFrame(tick);
-      };
-      frameRef.current = requestAnimationFrame(tick);
     } catch {
       if (run === runRef.current) {
         setError(
-          "No se pudo acceder a la cámara. Revisa los permisos del navegador o escribe el código del cliente."
+          "No se pudo acceder a la cámara. Revisa los permisos del navegador (la cámara exige HTTPS) o escribe el código del cliente."
         );
       }
     }
@@ -140,7 +121,7 @@ export default function ScanPage() {
     <div className="min-h-screen bg-lito-deep text-white">
       <SiteNav />
       <main className="mx-auto max-w-lg px-4 pb-10 pt-5 sm:px-6">
-        <h1 className="lettering text-[1.8rem]">Registrar visita</h1>
+        <h1 className="display text-[1.7rem]">Registrar visita</h1>
         <p className="mt-2 text-[1.05rem] leading-snug text-white/85">
           Apunta al QR de la tarjeta del cliente. El sello se suma solo.
         </p>
@@ -153,7 +134,7 @@ export default function ScanPage() {
 
         <div className={result ? "hidden" : "mt-5"}>
           <div
-            className="relative aspect-square w-full overflow-hidden rounded-[10px] border-2 border-white/80 bg-tinta sm:aspect-[4/3]"
+            className="relative aspect-square w-full overflow-hidden rounded-3xl border border-white/20 bg-tinta sm:aspect-[4/3]"
             style={{ containerType: "size" }}
           >
             <video ref={videoRef} playsInline muted className="h-full w-full object-cover" />
@@ -177,7 +158,7 @@ export default function ScanPage() {
                 <div className="pointer-events-none absolute inset-[12%] overflow-hidden" style={{ containerType: "size" }} aria-hidden="true">
                   <div className="scan-sweep h-[3px] w-full rounded-full bg-canario/80" />
                 </div>
-                <p className="label-caps absolute inset-x-0 bottom-4 text-center text-[0.95rem] text-white drop-shadow">
+                <p className="label font-semibold absolute inset-x-0 bottom-4 text-center text-[0.95rem] text-white drop-shadow">
                   {processing ? "Registrando visita…" : "Buscando QR…"}
                 </p>
               </>
@@ -218,7 +199,7 @@ export default function ScanPage() {
 
           <div aria-live="polite" className="empty:hidden">
             {error && (
-              <p className="mt-4 flex items-start gap-2.5 rounded-lg bg-aviso-soft p-3.5 text-[0.95rem] leading-snug text-tinta">
+              <p className="mt-4 flex items-start gap-2.5 rounded-xl bg-aviso-soft p-3.5 text-[0.95rem] leading-snug text-tinta">
                 <AlertIcon size={20} className="mt-0.5 shrink-0 text-aviso" />
                 <span>{error}</span>
               </p>
@@ -226,7 +207,7 @@ export default function ScanPage() {
           </div>
 
           <form
-            className="on-mesa stock mt-6 rounded-[10px] border-2 border-tinta p-4 text-tinta"
+            className="on-mesa mt-6 rounded-2xl bg-white p-4 text-tinta"
             onSubmit={(e) => {
               e.preventDefault();
               if (manual.trim()) void handleCode(manual);

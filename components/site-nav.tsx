@@ -33,7 +33,7 @@ export function WordmarkSeal({ size = 32 }: { size?: number }) {
   );
 }
 
-export function SiteNav({ current }: { current?: string }) {
+export function SiteNav({ current, minimal = false }: { current?: string; minimal?: boolean }) {
   const pathname = usePathname();
   const active = current ?? pathname;
   return (
@@ -41,8 +41,9 @@ export function SiteNav({ current }: { current?: string }) {
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-2 sm:gap-6 sm:px-8 sm:py-2.5">
         <Link href="/" className="flex min-h-11 items-center gap-2.5" aria-label="Sello Club, inicio">
           <WordmarkSeal />
-          <span className="lettering hidden text-[1.3rem] sm:inline">Sello Club</span>
+          <span className="display hidden text-[1.3rem] sm:inline">Sello Club</span>
         </Link>
+        {!minimal && (
         <nav aria-label="Principal" className="-mx-2 flex items-center">
           {links.map(({ href, label, icon: IconCmp }) => {
             const isActive = active === href || active?.startsWith(`${href}/`);
@@ -51,7 +52,7 @@ export function SiteNav({ current }: { current?: string }) {
                 key={href}
                 href={href}
                 aria-current={isActive ? "page" : undefined}
-                className={`label-caps flex min-h-11 items-center gap-2 rounded-lg px-2.5 text-[0.95rem] sm:px-3 transition-colors ${
+                className={`label font-semibold flex min-h-11 items-center gap-2 rounded-xl px-2.5 text-[0.95rem] sm:px-3 transition-colors ${
                   isActive ? "bg-canario text-tinta" : "text-white hover:bg-white/12"
                 }`}
               >
@@ -61,6 +62,7 @@ export function SiteNav({ current }: { current?: string }) {
             );
           })}
         </nav>
+        )}
       </div>
     </header>
   );

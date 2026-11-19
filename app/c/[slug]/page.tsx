@@ -5,7 +5,7 @@ export default function JoinRestaurantPage() {
   return (
     <Suspense
       fallback={
-        <div role="status" className="rays flex min-h-screen items-center justify-center text-lg font-semibold text-white">
+        <div role="status" className="bg-lito flex min-h-screen items-center justify-center text-lg font-semibold text-white">
           Cargando…
         </div>
       }

@@ -114,7 +114,7 @@ export function LoyaltyCard({
 
         <div aria-live="polite" className="space-y-3 empty:hidden">
           {event && (
-            <div className="rise flex items-start gap-3 rounded-lg bg-canario p-3.5 text-tinta">
+            <div className="rise flex items-start gap-3 rounded-xl bg-canario p-3.5 text-tinta">
               <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-tinta text-canario">
                 <CheckIcon size={14} strokeWidth={3} />
               </span>
@@ -126,7 +126,7 @@ export function LoyaltyCard({
             </div>
           )}
           {recovered && !event && (
-            <div className="flex items-start gap-3 rounded-lg bg-hoja-soft p-3.5 text-tinta">
+            <div className="flex items-start gap-3 rounded-xl bg-hoja-soft p-3.5 text-tinta">
               <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-hoja text-white">
                 <CheckIcon size={14} strokeWidth={3} />
               </span>
@@ -168,7 +168,7 @@ export function LoyaltyCard({
       <div className="sticky bottom-0 mt-auto border-t border-white/15 bg-lito px-5 pb-[max(1rem,env(safe-area-inset-bottom))] pt-3">
         <div aria-live="polite" className="empty:hidden">
           {walletError && (
-            <p className="mb-3 flex items-start gap-2 rounded-lg bg-aviso-soft p-3 text-[0.95rem] leading-snug text-tinta">
+            <p className="mb-3 flex items-start gap-2 rounded-xl bg-aviso-soft p-3 text-[0.95rem] leading-snug text-tinta">
               <AlertIcon size={18} className="mt-0.5 shrink-0 text-aviso" />
               <span>{walletError}</span>
             </p>
@@ -179,7 +179,7 @@ export function LoyaltyCard({
               <button
                 type="button"
                 onClick={onConfirmSaved}
-                className="min-h-11 rounded-lg px-3 font-bold text-canario underline underline-offset-4 hover:bg-white/10"
+                className="min-h-11 rounded-xl px-3 font-bold text-canario underline underline-offset-4 hover:bg-white/10"
               >
                 Sí, ya la guardé
               </button>
@@ -230,18 +230,18 @@ export function LoyaltyCard({
           if (e.target === dialogRef.current) closeQr();
         }}
         aria-labelledby="qr-title"
-        className="m-auto w-[min(92vw,26rem)] rounded-[10px] border-0 bg-transparent p-0 text-tinta backdrop:bg-tinta/85"
+        className="m-auto w-[min(92vw,26rem)] rounded-2xl border-0 bg-transparent p-0 text-tinta backdrop:bg-tinta/85"
       >
-        <div className="stock relative rounded-[10px] border-2 border-tinta p-6 text-center">
+        <div className="relative rounded-3xl bg-white p-6 text-center shadow-lift">
           <button
             type="button"
             onClick={closeQr}
-            className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-lg text-tinta hover:bg-tinta/10"
+            className="absolute right-2 top-2 flex h-11 w-11 items-center justify-center rounded-xl text-tinta hover:bg-tinta/10"
             aria-label="Cerrar"
           >
             <CloseIcon size={22} />
           </button>
-          <h2 id="qr-title" className="lettering px-8 text-[1.5rem]">
+          <h2 id="qr-title" className="display px-8 text-[1.5rem]">
             Muestra este QR en caja
           </h2>
           <p className="mt-2 text-[0.95rem] text-tinta-soft">
@@ -252,10 +252,10 @@ export function LoyaltyCard({
           </div>
           {code && (
             <p className="mt-4">
-              <span className="label-caps block text-[0.85rem] text-tinta-soft">
+              <span className="label font-semibold block text-[0.85rem] text-tinta-soft">
                 ¿No lee el QR? Dicta este código
               </span>
-              <span className="lettering num mt-1 block text-[1.9rem] tracking-[0.08em]">{code}</span>
+              <span className="display num mt-1 block text-[2rem] tracking-[0.08em]">{code}</span>
             </p>
           )}
         </div>

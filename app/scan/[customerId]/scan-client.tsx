@@ -46,7 +46,7 @@ export default function ScanClient() {
         ) : (
           <div className="space-y-5">
             <div>
-              <h1 className="lettering text-[1.8rem]">Confirmar visita</h1>
+              <h1 className="display text-[1.7rem]">Confirmar visita</h1>
               <p className="mt-2 text-[1.05rem] leading-snug text-white/85">
                 {pass
                   ? `Vas a sumar un sello a ${pass.customer.name}.`
@@ -68,7 +68,7 @@ export default function ScanClient() {
 
             <div aria-live="polite" className="empty:hidden">
               {error && (
-                <p className="flex items-start gap-2.5 rounded-lg bg-aviso-soft p-3.5 text-[0.95rem] leading-snug text-tinta">
+                <p className="flex items-start gap-2.5 rounded-xl bg-aviso-soft p-3.5 text-[0.95rem] leading-snug text-tinta">
                   <AlertIcon size={20} className="mt-0.5 shrink-0 text-aviso" />
                   <span>{error}</span>
                 </p>
