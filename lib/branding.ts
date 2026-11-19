@@ -1,4 +1,10 @@
 export const TEMPLATES = {
+  etiqueta: {
+    label: "Etiqueta",
+    bgColor: "#f4ecd8",
+    primaryColor: "#d42a14",
+    textColor: "#10143a",
+  },
   classico: {
     label: "Clásico",
     bgColor: "#1e293b",
@@ -24,11 +30,11 @@ export type TemplateKey = keyof typeof TEMPLATES;
 export const DEFAULT_FORM = {
   name: "Café de la Esquina",
   slug: "cafe-de-la-esquina",
-  template: "classico" as TemplateKey,
+  template: "etiqueta" as TemplateKey,
   logoUrl: "",
-  bgColor: TEMPLATES.classico.bgColor,
-  primaryColor: TEMPLATES.classico.primaryColor,
-  textColor: TEMPLATES.classico.textColor,
+  bgColor: TEMPLATES.etiqueta.bgColor,
+  primaryColor: TEMPLATES.etiqueta.primaryColor,
+  textColor: TEMPLATES.etiqueta.textColor,
   description: "Tu café de siempre, ahora con recompensas.",
   stampsRequired: 5,
   rewardText: "¡Un café gratis!",

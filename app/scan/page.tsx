@@ -124,8 +124,11 @@ export default function ScanPage() {
 
   // El escáner arranca solo: el personal abre la página y ya está listo.
   useEffect(() => {
-    void startCamera();
-    return () => stopCamera();
+    const timer = window.setTimeout(() => void startCamera(), 0);
+    return () => {
+      window.clearTimeout(timer);
+      stopCamera();
+    };
   }, [startCamera, stopCamera]);
 
   const resume = useCallback(() => {
@@ -150,7 +153,7 @@ export default function ScanPage() {
 
         <div className={result ? "hidden" : "mt-5"}>
           <div
-            className="relative aspect-[3/4] w-full overflow-hidden rounded-[10px] border-2 border-white/80 bg-tinta sm:aspect-[4/3]"
+            className="relative aspect-square w-full overflow-hidden rounded-[10px] border-2 border-white/80 bg-tinta sm:aspect-[4/3]"
             style={{ containerType: "size" }}
           >
             <video ref={videoRef} playsInline muted className="h-full w-full object-cover" />

@@ -19,8 +19,10 @@ type Props = {
   walletUrl?: string | null;
   walletLoading?: boolean;
   walletError?: string | null;
+  walletOpened?: boolean;
   walletSaved?: boolean;
   onAddWallet?: () => void;
+  onConfirmSaved?: () => void;
 };
 
 type StampEvent = { from: number; to: number };
@@ -48,8 +50,10 @@ export function LoyaltyCard({
   walletUrl,
   walletLoading,
   walletError,
+  walletOpened,
   walletSaved,
   onAddWallet,
+  onConfirmSaved,
 }: Props) {
   const [scanUrl] = useState(() =>
     typeof window === "undefined" ? "" : `${window.location.origin}/scan/${customerId}`
@@ -169,6 +173,18 @@ export function LoyaltyCard({
               <span>{walletError}</span>
             </p>
           )}
+          {walletOpened && !walletSaved && !walletLoading && !walletError && (
+            <div className="mb-3 flex items-center justify-between gap-3 text-[0.95rem] text-white">
+              <span className="font-semibold">¿Ya la guardaste en Wallet?</span>
+              <button
+                type="button"
+                onClick={onConfirmSaved}
+                className="min-h-11 rounded-lg px-3 font-bold text-canario underline underline-offset-4 hover:bg-white/10"
+              >
+                Sí, ya la guardé
+              </button>
+            </div>
+          )}
           {walletLoading && !walletError && (
             <p className="mb-2 text-center text-[0.95rem] font-semibold text-white">
               Preparando tu pase de Google Wallet…
@@ -193,7 +209,7 @@ export function LoyaltyCard({
               ) : (
                 <WalletIcon size={20} />
               )}
-              {walletSaved ? "Volver a abrir Wallet" : "Agregar a Google Wallet"}
+              {walletSaved ? "Abrir mi pase de Wallet" : walletOpened ? "Abrir Wallet otra vez" : "Agregar a Google Wallet"}
             </button>
           )}
           <button

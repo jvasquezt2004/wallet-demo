@@ -35,7 +35,27 @@ function Loading({ text }: { text: string }) {
   );
 }
 
-const walletKey = (customerId: string) => `loyalty-wallet:${customerId}`;
+// "opened": se generó y abrió el pase. "saved": el cliente confirmó que ya lo guardó
+// (Google no nos avisa, así que solo podemos fiarnos de su confirmación).
+const walletOpenedKey = (customerId: string) => `loyalty-wallet-opened:${customerId}`;
+const walletSavedKey = (customerId: string) => `loyalty-wallet:${customerId}`;
+
+function readFlag(key: string | null): boolean {
+  if (typeof window === "undefined" || !key) return false;
+  try {
+    return window.localStorage.getItem(key) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function writeFlag(key: string) {
+  try {
+    window.localStorage.setItem(key, "1");
+  } catch {
+    // Sin almacenamiento solo se pierde el recordatorio.
+  }
+}
 
 export default function JoinClient() {
   const { slug } = useParams<{ slug: string }>();
@@ -53,14 +73,12 @@ export default function JoinClient() {
   const [walletUrl, setWalletUrl] = useState<string | null>(null);
   const [walletLoading, setWalletLoading] = useState(false);
   const [walletError, setWalletError] = useState<string | null>(null);
-  const [walletSaved, setWalletSaved] = useState<boolean>(() => {
-    if (typeof window === "undefined" || !customerId) return false;
-    try {
-      return window.localStorage.getItem(walletKey(customerId)) === "1";
-    } catch {
-      return false;
-    }
-  });
+  const [walletOpened, setWalletOpened] = useState<boolean>(() =>
+    readFlag(customerId ? walletOpenedKey(customerId) : null)
+  );
+  const [walletSaved, setWalletSaved] = useState<boolean>(() =>
+    readFlag(customerId ? walletSavedKey(customerId) : null)
+  );
 
   // La tarjeta se refresca sola: cuando el personal escanea, el cliente ve caer el sello.
   const { data: passData } = useSWR<PassData | null>(
@@ -94,12 +112,8 @@ export default function JoinClient() {
     try {
       const result = await postJson<{ url: string }>("/api/wallet", { customerId });
       setWalletUrl(result.url);
-      setWalletSaved(true);
-      try {
-        window.localStorage.setItem(walletKey(customerId), "1");
-      } catch {
-        // Sin almacenamiento solo se pierde el recordatorio de "ya la guardé".
-      }
+      setWalletOpened(true);
+      writeFlag(walletOpenedKey(customerId));
       // Un toque menos: abrimos Wallet en cuanto el pase está listo. Si el
       // navegador lo bloquea, el botón "Abrir en Google Wallet" sigue ahí.
       window.location.assign(result.url);
@@ -159,8 +173,13 @@ export default function JoinClient() {
             walletUrl={walletUrl}
             walletLoading={walletLoading}
             walletError={walletError}
+            walletOpened={walletOpened}
             walletSaved={walletSaved}
             onAddWallet={handleAddWallet}
+            onConfirmSaved={() => {
+              setWalletSaved(true);
+              writeFlag(walletSavedKey(customerId));
+            }}
           />
         </div>
       </main>

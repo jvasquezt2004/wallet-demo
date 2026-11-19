@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { BrushIcon, CameraIcon, ChartIcon } from "./icons";
 
 const links = [
-  { href: "/admin", label: "Tarjeta", icon: BrushIcon },
+  { href: "/admin", label: "Configurar", icon: BrushIcon },
   { href: "/scan", label: "Escáner", icon: CameraIcon },
   { href: "/dashboard", label: "Panel", icon: ChartIcon },
 ];
@@ -38,10 +38,10 @@ export function SiteNav({ current }: { current?: string }) {
   const active = current ?? pathname;
   return (
     <header className="bg-lito text-white">
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-x-6 gap-y-1 px-4 py-2.5 sm:px-8">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-3 py-2 sm:gap-6 sm:px-8 sm:py-2.5">
         <Link href="/" className="flex min-h-11 items-center gap-2.5" aria-label="Sello Club, inicio">
           <WordmarkSeal />
-          <span className="lettering text-[1.3rem]">Sello Club</span>
+          <span className="lettering hidden text-[1.3rem] sm:inline">Sello Club</span>
         </Link>
         <nav aria-label="Principal" className="-mx-2 flex items-center">
           {links.map(({ href, label, icon: IconCmp }) => {
@@ -51,11 +51,11 @@ export function SiteNav({ current }: { current?: string }) {
                 key={href}
                 href={href}
                 aria-current={isActive ? "page" : undefined}
-                className={`label-caps flex min-h-11 items-center gap-2 rounded-lg px-3 text-[0.95rem] transition-colors ${
+                className={`label-caps flex min-h-11 items-center gap-2 rounded-lg px-2.5 text-[0.95rem] sm:px-3 transition-colors ${
                   isActive ? "bg-canario text-tinta" : "text-white hover:bg-white/12"
                 }`}
               >
-                <IconCmp size={18} />
+                <IconCmp size={18} className="hidden sm:block" />
                 {label}
               </Link>
             );

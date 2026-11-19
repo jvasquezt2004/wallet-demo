@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-19T00:00:00Z",
+  "title": "Design System: Sello Club",
+  "extensions": {
+    "colorMeta": {
+      "lito": { "role": "primary", "displayName": "Ultramarine Litho", "canonical": "#1b2a8f", "tonalRamp": ["#070b2e", "#0d1347", "#131e6b", "#1b2a8f", "#2c3ea8", "#6673c9", "#a6aedf", "#dde0f3"] },
+      "lito-deep": { "role": "primary", "displayName": "Ultramarine Deep", "canonical": "#131e6b", "tonalRamp": ["#05081f", "#0a1041", "#131e6b", "#1b2a8f", "#2c3ea8", "#6673c9", "#a6aedf", "#dde0f3"] },
+      "lito-soft": { "role": "primary", "displayName": "Ultramarine Soft", "canonical": "#2c3ea8", "tonalRamp": ["#0d1347", "#131e6b", "#1b2a8f", "#2c3ea8", "#4a5bc0", "#7c88d2", "#b0b7e3", "#e0e3f4"] },
+      "tomate": { "role": "secondary", "displayName": "Tomato Ink", "canonical": "#d42a14", "tonalRamp": ["#3d0a04", "#6e1409", "#a91f0d", "#d42a14", "#e5543f", "#ee8878", "#f6bdb3", "#fce6e2"] },
+      "tomate-deep": { "role": "secondary", "displayName": "Tomato Deep", "canonical": "#a91f0d", "tonalRamp": ["#2e0803", "#591007", "#7e170a", "#a91f0d", "#d42a14", "#e5543f", "#f0a094", "#fbdcd7"] },
+      "canario": { "role": "secondary", "displayName": "Canary Yellow", "canonical": "#ffc72c", "tonalRamp": ["#4d3800", "#805c00", "#b88600", "#e6ae00", "#ffc72c", "#ffd55c", "#ffe597", "#fff6d6"] },
+      "papel": { "role": "neutral", "displayName": "Label Stock", "canonical": "#f4ecd8", "tonalRamp": ["#3a3322", "#5f5538", "#8a7d54", "#b8a97a", "#d6c9a2", "#e6dbbf", "#f4ecd8", "#fbf7ec"] },
+      "papel-deep": { "role": "neutral", "displayName": "Label Stock Deep", "canonical": "#e6dbbf", "tonalRamp": ["#3a3322", "#5f5538", "#8a7d54", "#b8a97a", "#d0c297", "#e6dbbf", "#f0e7d0", "#f9f4e6"] },
+      "tinta": { "role": "neutral", "displayName": "Keyline Ink", "canonical": "#10143a", "tonalRamp": ["#10143a", "#232859", "#363c78", "#4a5080", "#7a80a6", "#a8accb", "#d2d4e6", "#eceef6"] },
+      "tinta-soft": { "role": "neutral", "displayName": "Soft Ink", "canonical": "#4a5080", "tonalRamp": ["#10143a", "#272c5c", "#3b4170", "#4a5080", "#6c7199", "#9296b8", "#c0c3da", "#e6e8f2"] },
+      "mesa": { "role": "neutral", "displayName": "Mesa", "canonical": "#eef1fa", "tonalRamp": ["#454a63", "#6a708c", "#8f95b0", "#b4b9d0", "#d0d5e6", "#e1e5f3", "#eef1fa", "#f8f9fd"] },
+      "hoja": { "role": "status", "displayName": "Leaf Green", "canonical": "#137a47", "tonalRamp": ["#04241a", "#0a4a2b", "#0e5f37", "#137a47", "#3d9a69", "#78bf98", "#b3dcc4", "#dff3e7"] },
+      "hoja-soft": { "role": "status", "displayName": "Leaf Wash", "canonical": "#dff3e7", "tonalRamp": ["#137a47", "#3d9a69", "#78bf98", "#a8d6bd", "#c6e6d5", "#dff3e7", "#edf8f1", "#f7fcf9"] },
+      "aviso": { "role": "status", "displayName": "Amber Notice", "canonical": "#8a5a00", "tonalRamp": ["#2e1e00", "#5c3d00", "#8a5a00", "#b57800", "#d99c1f", "#ebbe5c", "#f6dc9f", "#fff1cc"] },
+      "aviso-soft": { "role": "status", "displayName": "Amber Wash", "canonical": "#fff1cc", "tonalRamp": ["#8a5a00", "#b57800", "#d99c1f", "#ebc260", "#f6dc9f", "#fff1cc", "#fff7e0", "#fffbf0"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Home hook headline in Bowlby One with a second-ink offset." },
+      "headline": { "displayName": "Headline", "purpose": "Section headings, card totals, route step numerals." },
+      "title": { "displayName": "Title", "purpose": "Step and row titles in Barlow bold." },
+      "body": { "displayName": "Body", "purpose": "All reading text in Barlow." },
+      "label": { "displayName": "Label", "purpose": "Condensed caps for field labels, nav tabs, stats, Premio tags." }
+    },
+    "shadows": [
+      { "name": "focus-ring", "value": "outline: 3px solid #ffc72c; outline-offset: 2px; box-shadow: 0 0 0 5px #10143a", "purpose": "Focus on ultramarine and ink surfaces; inside .on-mesa it is ultramarine outline with a white halo." },
+      { "name": "label-margin", "value": "0 0 0 3px #f4ecd8", "purpose": "Zero-blur cream margin around the stamp card." },
+      { "name": "second-ink", "value": "0.055em 0.055em 0 var(--lettering-ink, #d42a14)", "purpose": "Misregistered second ink on large lettering (text only)." }
+    ],
+    "motion": [
+      { "name": "ease-out", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Stamp landing, ghost and rise-in." },
+      { "name": "stamp-land", "value": "0.7s ease-out: scale 1.55 rotate -14deg to 0.92/3deg to 1.04/-1deg to rest", "purpose": "A new stamp lands off-register and settles." },
+      { "name": "rise", "value": "0.6s ease-out, translateY 14px to 0, stagger 80ms", "purpose": "Entrance of hero and card content." },
+      { "name": "control-transition", "value": "150ms on background-color, transform, opacity", "purpose": "Button hover and 1px press." },
+      { "name": "reduced-motion", "value": "animations none, transitions 0.01ms", "purpose": "prefers-reduced-motion fallback." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "max-container", "value": "72rem" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The one tomato action on paper or mesa.",
+      "html": "<button class=\"ds-btn-primary\">Guardar</button>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border:0;border-radius:8px;background:var(--tomate,#d42a14);color:#fff;font:700 16px/1 Barlow,system-ui,sans-serif;cursor:pointer;transition:background-color .15s,transform .15s}.ds-btn-primary:hover{background:var(--tomate-deep,#a91f0d)}.ds-btn-primary:active{transform:translateY(1px)}.ds-btn-primary:focus-visible{outline:3px solid #1b2a8f;outline-offset:2px;box-shadow:0 0 0 5px #fff}"
+    },
+    {
+      "name": "Canary Button",
+      "kind": "button",
+      "refersTo": "button-canary",
+      "description": "Primary action on the ultramarine ground.",
+      "html": "<div style=\"background:#1b2a8f;padding:16px\"><button class=\"ds-btn-canary\">Abrir mi tarjeta</button></div>",
+      "css": ".ds-btn-canary{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border:0;border-radius:8px;background:#ffc72c;color:#10143a;font:700 16px/1 Barlow,system-ui,sans-serif;cursor:pointer;transition:background-color .15s,transform .15s}.ds-btn-canary:hover{background:#ffd55c}.ds-btn-canary:active{transform:translateY(1px)}.ds-btn-canary:focus-visible{outline:3px solid #ffc72c;outline-offset:2px;box-shadow:0 0 0 5px #10143a}"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary action with a 2px keyline.",
+      "html": "<button class=\"ds-btn-outline\">Cancelar</button>",
+      "css": ".ds-btn-outline{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:0 20px;border:2px solid #10143a;border-radius:8px;background:transparent;color:#10143a;font:700 16px/1 Barlow,system-ui,sans-serif;cursor:pointer;transition:background-color .15s}.ds-btn-outline:hover{background:rgba(16,20,58,.08)}.ds-btn-outline:focus-visible{outline:3px solid #1b2a8f;outline-offset:2px;box-shadow:0 0 0 5px #fff}"
+    },
+    {
+      "name": "Field",
+      "kind": "input",
+      "refersTo": "input",
+      "description": "White field, 2px keyline, condensed caps label.",
+      "html": "<label class=\"ds-field-label\">Correo</label><input class=\"ds-input\" placeholder=\"tu@correo.com\">",
+      "css": ".ds-field-label{display:block;margin-bottom:6px;font:600 13.6px 'Barlow Condensed',system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:#10143a}.ds-input{box-sizing:border-box;width:100%;min-height:48px;padding:0 14px;border:2px solid #10143a;border-radius:8px;background:#fff;color:#10143a;font:400 16px Barlow,system-ui,sans-serif;transition:border-color .15s,box-shadow .15s}.ds-input:hover{border-color:#1b2a8f}.ds-input:focus{outline:none;border-color:#1b2a8f;box-shadow:0 0 0 4px rgba(27,42,143,.2)}.ds-input::placeholder{color:rgba(16,20,58,.5)}"
+    },
+    {
+      "name": "Navigation",
+      "kind": "nav",
+      "refersTo": "nav-link-active",
+      "description": "Ultramarine bar; active tab is canary.",
+      "html": "<nav class=\"ds-nav\"><a class=\"ds-nav-link ds-active\" href=\"#\">Configurar</a><a class=\"ds-nav-link\" href=\"#\">Escáner</a><a class=\"ds-nav-link\" href=\"#\">Panel</a></nav>",
+      "css": ".ds-nav{display:flex;gap:4px;padding:8px 12px;background:#1b2a8f}.ds-nav-link{display:flex;align-items:center;min-height:44px;padding:0 12px;border-radius:8px;color:#fff;text-decoration:none;font:600 15.2px 'Barlow Condensed',system-ui,sans-serif;letter-spacing:.09em;text-transform:uppercase;transition:background-color .15s}.ds-nav-link:hover{background:rgba(255,255,255,.12)}.ds-nav-link.ds-active{background:#ffc72c;color:#10143a}.ds-nav-link:focus-visible{outline:3px solid #ffc72c;outline-offset:2px}"
+    },
+    {
+      "name": "Step Marker",
+      "kind": "chip",
+      "description": "Round numbered marker with condensed caps name.",
+      "html": "<span class=\"ds-step\"><span class=\"ds-step-n\">2</span><span class=\"ds-step-t\">Tu tarjeta</span></span>",
+      "css": ".ds-step{display:inline-flex;align-items:center;gap:8px;font-family:'Barlow Condensed',system-ui,sans-serif}.ds-step-n{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border:2px solid #10143a;border-radius:9999px;background:#10143a;color:#fff;font-weight:600;font-size:15.2px;letter-spacing:.09em}.ds-step-t{font-weight:600;font-size:13px;letter-spacing:.09em;text-transform:uppercase;color:#10143a}"
+    },
+    {
+      "name": "Grade Seal",
+      "kind": "custom",
+      "description": "Scalloped stamp: outlined with number when empty, inked with a star when stamped.",
+      "html": "<svg class=\"ds-seal\" viewBox=\"0 0 100 100\" width=\"72\" height=\"72\"><circle cx=\"50\" cy=\"50\" r=\"45\" fill=\"#1b2a8f\"/><circle cx=\"50\" cy=\"50\" r=\"35\" fill=\"none\" stroke=\"#f4ecd8\" stroke-opacity=\".75\" stroke-width=\"1.6\"/><path d=\"M50 31 L55 43 L68 43 L58 51 L62 64 L50 56 L38 64 L42 51 L32 43 L45 43Z\" fill=\"#f4ecd8\"/></svg>",
+      "css": ".ds-seal{display:block}.ds-seal:hover{transform:rotate(-3deg)}.ds-seal{transition:transform .15s}"
+    },
+    {
+      "name": "Ribbon Banner",
+      "kind": "custom",
+      "description": "Restaurant name on a banner with darker notched tails and second-ink lettering.",
+      "html": "<div class=\"ds-ribbon\"><span class=\"ds-tail l\"></span><span class=\"ds-tail r\"></span><h2 class=\"ds-name\">La Cantina</h2></div>",
+      "css": ".ds-ribbon{position:relative;width:calc(100% - 44px);margin:12px auto}.ds-tail{position:absolute;top:9px;width:34px;height:100%;background:#9a1f0f}.ds-tail.l{left:-22px;clip-path:polygon(0 0,100% 0,100% 100%,0 100%,32% 50%)}.ds-tail.r{right:-22px;clip-path:polygon(0 0,100% 0,68% 50%,100% 100%,0 100%)}.ds-name{position:relative;margin:0;padding:12px 16px;background:#d42a14;color:#fff;text-align:center;font:400 28px/1 'Bowlby One',system-ui,sans-serif;letter-spacing:.005em;text-shadow:.055em .055em 0 #9a1f0f}"
+    }
+  ],
+  "narrative": {
+    "northStar": "Etiqueta de Caja",
+    "overview": "Every restaurant's stamp card is printed like a prize produce-crate label, and each stamp is a grade seal inked onto it. The system is flat litho ink on a drenched ultramarine ground: no gradients of light, no soft shadows, only a few opaque inks and a near-black keyline. The world is recognisable with the copy removed: scalloped seals, a ribbon banner with notched tails, sunburst rays behind the label, 2px keylines.\n\nTwo registers coexist. Presentation surfaces (the home pitch, the customer join and card, the scanner viewfinder) sit on the ultramarine ground with rays and carry the label objects. Work surfaces (admin, dashboard, forms) sit on \"mesa\", a cool near-white, with ink-outlined controls; they borrow type, palette and one seal or banner move, nothing more. Label stock (papel) exists only inside label objects, never as a page background.\n\nThe restaurant's own colors lead on the card; the interface checks their contrast and corrects ink rather than trusting them. Sello Club's palette is the frame around the card, not the card's content.",
+    "keyCharacteristics": [
+      "Opaque litho inks, no blur shadows, no translucency except dialog scrim and hover tints.",
+      "Heavy lettering face reserved for names, banners and numerals; everything read is Barlow.",
+      "Scalloped grade seal is the unit of progress; the star appears only inside an inked seal and the wordmark.",
+      "One motion idea: the seal lands off-register and settles. Everything else is a single rise-in."
+    ],
+    "rules": [
+      { "name": "The Stock Rule", "body": "Label stock cream appears only on label objects. A page, a form or a dashboard panel on cream is wrong; use mesa.", "section": "colors" },
+      { "name": "The Green Is Success Rule", "body": "Leaf green never decorates; it means done.", "section": "colors" },
+      { "name": "The Corrected Ink Rule", "body": "Restaurant colors are data. Text must reach 4.5:1 and seal ink 3:1 against the card ground, else the UI substitutes keyline ink or white (see readableOn).", "section": "colors" },
+      { "name": "The Lettering Is For Names Rule", "body": "Bowlby One carries the restaurant name, banners, headlines and numerals. Never body copy, never buttons.", "section": "typography" },
+      { "name": "The Second Ink Rule", "body": "Large lettering may carry a hard 0.055em offset text-shadow in a second ink (tomato on ultramarine, ribbon shade on a banner): it reads as misregistered print. It is a text treatment only; boxes never get hard offset shadows.", "section": "typography" },
+      { "name": "The Flat Ink Rule", "body": "No blurred shadows. If something must lift, overlap it or outline it.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do put one tomato (or, on ultramarine, one canary) action per view.",
+      "Do keep stamps as scalloped seals and progress as seals filled in order.",
+      "Do run all restaurant colors through the contrast guard before painting text or seals.",
+      "Do keep motion to the stamp landing and the rise-in, and honor prefers-reduced-motion (animations off, transitions near-zero).",
+      "Do use mesa and white fields on work surfaces and cream only on label objects."
+    ],
+    "donts": [
+      "Don't use a dark-slate wallet card with gold stars, or a kraft-paper punch card; these are the refused alternatives.",
+      "Don't use blurred drop shadows or glows; depth is overlap and keyline.",
+      "Don't set body copy, buttons or form text in Bowlby One.",
+      "Don't use leaf green or amber as decoration.",
+      "Don't use label cream as a page or panel background."
+    ]
+  }
+}

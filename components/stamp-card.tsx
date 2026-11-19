@@ -26,10 +26,14 @@ type Props = {
 };
 
 export function cardMaxStamps(restaurant: CardRestaurant): number {
-  return Math.max(
-    1,
-    restaurant.stampsRequired ?? 0,
-    ...(restaurant.rewards ?? []).map((reward) => reward.stampsRequired)
+  // Tope de dibujo: una tarjeta de cientos de sellos no es legible ni útil.
+  return Math.min(
+    60,
+    Math.max(
+      1,
+      restaurant.stampsRequired ?? 0,
+      ...(restaurant.rewards ?? []).map((reward) => reward.stampsRequired)
+    )
   );
 }
 
@@ -52,7 +56,10 @@ export function StampCard({
   const text = readableOn(bg, restaurant.textColor, 4.5);
   const seal = contrastRatio(bg, restaurant.primaryColor) >= 3 ? restaurant.primaryColor : text;
   const onSeal = readableOn(seal, bg, 4.5);
-  const quiet = mix(bg, text, 0.78);
+  // Texto pequeño: el acento y el tono secundario también deben llegar a 4.5:1.
+  const accent = readableOn(bg, seal, 4.5);
+  const softText = mix(bg, text, 0.78);
+  const quiet = contrastRatio(bg, softText) >= 4.5 ? softText : text;
   const rewards = [...(restaurant.rewards ?? [])].sort((a, b) => a.stampsRequired - b.stampsRequired);
   const max = cardMaxStamps(restaurant);
   const stamps = Math.max(0, Math.min(max, rawStamps));
@@ -67,8 +74,13 @@ export function StampCard({
 
   return (
     <article
-      className="relative isolate overflow-hidden rounded-[10px] px-5 pb-0 pt-7 sm:px-6"
-      style={{ backgroundColor: bg, color: text }}
+      className="relative isolate overflow-hidden rounded-[10px] px-5 pb-0 pt-7 text-left sm:px-6"
+      style={{
+        backgroundColor: bg,
+        color: text,
+        // Margen de papel de la etiqueta: la tarjeta se ve aunque su fondo se parezca al de la página.
+        boxShadow: "0 0 0 3px var(--papel)",
+      }}
       aria-label={`Tarjeta de sellos de ${restaurant.name}`}
     >
       {/* Rayos de fondo y marco interior: el marco de la etiqueta impresa. */}
@@ -76,7 +88,7 @@ export function StampCard({
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10"
         style={{
-          background: `repeating-conic-gradient(from 0deg at 50% 14%, ${mix(bg, seal, 0.13)} 0deg 6deg, transparent 6deg 12deg)`,
+          background: `repeating-conic-gradient(from 0deg at 50% 14%, ${mix(bg, seal, 0.075)} 0deg 6deg, transparent 6deg 12deg)`,
         }}
       />
       <div
@@ -180,7 +192,7 @@ export function StampCard({
               {isReward && (
                 <span
                   className="label-caps mt-1 text-[0.72rem] leading-none"
-                  style={{ color: seal }}
+                  style={{ color: accent }}
                 >
                   Premio
                 </span>
@@ -206,7 +218,7 @@ export function StampCard({
                   style={{
                     borderColor: seal,
                     backgroundColor: unlocked ? seal : "transparent",
-                    color: unlocked ? onSeal : seal,
+                    color: unlocked ? onSeal : accent,
                   }}
                 >
                   {unlocked ? <CheckIcon size={16} strokeWidth={3} /> : reward.stampsRequired}
